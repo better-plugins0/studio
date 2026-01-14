@@ -12,6 +12,7 @@ export const plugins: Plugin[] = [
     author: 'PluginDev',
     minecraftVersions: ['1.20.1', '1.19.4', '1.18.2'],
     category: 'Gameplay',
+    downloadUrl: '#',
     gallery: [
       { url: 'https://picsum.photos/seed/summer-forest/800/600', hint: 'summer forest' },
       { url: 'https://picsum.photos/seed/winter-forest/800/600', hint: 'winter forest' },
@@ -26,7 +27,7 @@ export const plugins: Plugin[] = [
         <li>Download the latest version of the plugin.</li>
         <li>Place the .jar file into your server's /plugins folder.</li>
         <li>Restart or reload your server.</li>
-        <li>(Optional) Configure the config.yml file to customize season lengths and effects.</li>
+        <li>(Optional) Configure the config.yml to customize season lengths and effects.</li>
       </ol>
     `,
     commands: [
@@ -49,6 +50,7 @@ export const plugins: Plugin[] = [
     author: 'SecureCraft',
     minecraftVersions: ['1.20.x', '1.19.x'],
     category: 'Admin',
+    downloadUrl: '#',
     gallery: [
       { url: 'https://picsum.photos/seed/secure-ui/800/600', hint: 'security interface' },
     ],
@@ -86,6 +88,7 @@ export const plugins: Plugin[] = [
     author: 'EconoDev',
     minecraftVersions: ['1.20.1', '1.19.4'],
     category: 'Economy',
+    downloadUrl: '#',
     gallery: [],
     overview: `<p>A complete economy solution.</p>`,
     installation: `<p>Drop the jar in your plugins folder.</p>`,
@@ -103,6 +106,7 @@ export const plugins: Plugin[] = [
     author: 'PluginDev',
     minecraftVersions: ['1.20.x', '1.19.x', '1.18.x'],
     category: 'Utility',
+    downloadUrl: '#',
     gallery: [],
     overview: `<p>Customize your chat experience.</p>`,
     installation: `<p>Drop the jar in your plugins folder.</p>`,
