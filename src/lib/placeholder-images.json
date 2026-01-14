@@ -1,3 +1,52 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "plugin-icon-seasons",
+      "description": "Icon for BetterSeasons plugin",
+      "imageUrl": "https://images.unsplash.com/photo-1685335724471-aca0132a127a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8bGVhZiUyMHRyZWV8ZW58MHx8fHwxNzY4MzY1Njg2fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "leaf tree"
+    },
+    {
+      "id": "plugin-icon-login",
+      "description": "Icon for BetterLogin plugin",
+      "imageUrl": "https://images.unsplash.com/photo-1545748806-5ce42a3644a3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxzaGllbGQlMjBrZXl8ZW58MHx8fHwxNzY4MzY1Njg2fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "shield key"
+    },
+    {
+      "id": "plugin-icon-economy",
+      "description": "Icon for BetterEconomy plugin",
+      "imageUrl": "https://images.unsplash.com/photo-1624365168898-1f7189831f41?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxnb2xkJTIwY29pbnN8ZW58MHx8fHwxNzY4MzIyOTQ4fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "gold coins"
+    },
+    {
+      "id": "plugin-icon-chat",
+      "description": "Icon for BetterChat plugin",
+      "imageUrl": "https://images.unsplash.com/photo-1577563908411-5077b6dc7624?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxzcGVlY2glMjBidWJibGV8ZW58MHx8fHwxNzY4MzY1Njg2fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "speech bubble"
+    },
+    {
+      "id": "gallery-seasons-1",
+      "description": "A forest during summer",
+      "imageUrl": "https://images.unsplash.com/photo-1567529862126-0742389673a2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxzdW1tZXIlMjBmb3Jlc3R8ZW58MHx8fHwxNzY4MzY1Njg2fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "summer forest"
+    },
+    {
+      "id": "gallery-seasons-2",
+      "description": "A forest during winter",
+      "imageUrl": "https://images.unsplash.com/photo-1515274533087-a86b9e915d98?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHx3aW50ZXIlMjBmb3Jlc3R8ZW58MHx8fHwxNzY4MzY1Njg2fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "winter forest"
+    },
+    {
+      "id": "gallery-seasons-3",
+      "description": "A forest during autumn",
+      "imageUrl": "https://images.unsplash.com/photo-1535608577102-bb54e62fe045?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxhdXR1bW4lMjBsZWF2ZXN8ZW58MHx8fHwxNzY4MzA5OTQ1fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "autumn leaves"
+    },
+    {
+      "id": "gallery-login-1",
+      "description": "A secure login screen UI",
+      "imageUrl": "https://images.unsplash.com/photo-1726064855857-4540ed3834db?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxzZWN1cml0eSUyMGludGVyZmFjZXxlbnwwfHx8fDE3NjgzNjU2ODd8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "security interface"
+    }
+  ]
 }
