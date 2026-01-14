@@ -21,7 +21,7 @@ export type Plugin = {
   versions: {
     gameVersion: string;
     platforms: {
-      name: 'Paper' | 'Spigot' | 'Forge' | 'Fabric';
+      name: 'Paper' | 'Spigot' | 'Bukkit' | 'Forge' | 'Fabric';
       downloadUrl: string;
     }[];
   }[];

@@ -38,10 +38,10 @@ export const plugins: Plugin[] = [
       { version: '1.1.0', changes: ['Introduced configurable season lengths.', 'Performance improvements.'] },
     ],
     versions: [
-        { gameVersion: "1.21.11", platforms: [{ name: "Paper", downloadUrl: "#" }, { name: "Spigot", downloadUrl: "#" }] },
+        { gameVersion: "1.21.11", platforms: [{ name: "Paper", downloadUrl: "#" }, { name: "Spigot", downloadUrl: "#" }, { name: "Bukkit", downloadUrl: "#" }] },
         { gameVersion: "1.21.10", platforms: [{ name: "Paper", downloadUrl: "#" }] },
         { gameVersion: "1.20.4", platforms: [{ name: "Paper", downloadUrl: "#" }, { name: "Spigot", downloadUrl: "#" }] },
-        { gameVersion: "1.19.2", platforms: [{ name: "Paper", downloadUrl: "#" }] },
+        { gameVersion: "1.19.2", platforms: [{ name: "Paper", downloadUrl: "#" }, { name: "Bukkit", downloadUrl: "#" }] },
     ]
   },
   {
@@ -81,8 +81,8 @@ export const plugins: Plugin[] = [
       { version: '2.4.0', changes: ['Initial release for Minecraft 1.20.'] },
     ],
     versions: [
-        { gameVersion: "1.21.11", platforms: [{ name: "Paper", downloadUrl: "#" }] },
-        { gameVersion: "1.20.4", platforms: [{ name: "Paper", downloadUrl: "#" }] },
+        { gameVersion: "1.21.11", platforms: [{ name: "Paper", downloadUrl: "#" }, { name: "Spigot", downloadUrl: "#" }] },
+        { gameVersion: "1.20.4", platforms: [{ name: "Paper", downloadUrl: "#" }, { name: "Bukkit", downloadUrl: "#" }] },
     ]
   },
   {
@@ -102,7 +102,7 @@ export const plugins: Plugin[] = [
     commands: [{ command: '/bal', description: 'Check balance.', permission: 'bettereconomy.balance' }],
     changelog: [{ version: '3.0.0', changes: ['Full rewrite for performance.'] }],
     versions: [
-      { gameVersion: "1.20.1", platforms: [{ name: "Paper", downloadUrl: "#" }] }
+      { gameVersion: "1.20.1", platforms: [{ name: "Paper", downloadUrl: "#" }, { name: "Spigot", downloadUrl: "#" }, { name: "Bukkit", downloadUrl: "#" }] }
     ]
   },
   {
@@ -122,7 +122,7 @@ export const plugins: Plugin[] = [
     commands: [{ command: '/channel <name>', description: 'Switch chat channel.', permission: 'betterchat.channel.switch' }],
     changelog: [{ version: '1.5.0', changes: ['Added chat filtering.'] }],
     versions: [
-      { gameVersion: "1.20.4", platforms: [{ name: "Paper", downloadUrl: "#" }] }
+      { gameVersion: "1.20.4", platforms: [{ name: "Paper", downloadUrl: "#" }, { name: "Spigot", downloadUrl: "#" }, { name: "Bukkit", downloadUrl: "#" }] }
     ]
   },
 ];
