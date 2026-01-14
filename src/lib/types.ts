@@ -14,8 +14,6 @@ export type Plugin = {
     hint: string;
   }[];
   overview: string;
-  installation: string;
-  commands: { command: string; description: string; permission: string }[];
   changelog: { version: string; changes: string[] }[];
   downloadUrl?: string; // Kept for backward compatibility if needed
   versions: {

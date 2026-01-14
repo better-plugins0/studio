@@ -9,14 +9,6 @@ import {
 } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Server } from "lucide-react";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import type { Metadata } from "next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DownloadDialog } from "@/components/download-dialog";
@@ -81,10 +73,9 @@ export default function PluginDetailPage({ params }: { params: { slug:string } }
       <div className="grid grid-cols-1 gap-12 lg:grid-cols-3">
         <div className="lg:col-span-2">
           <Tabs defaultValue="overview">
-            <TabsList className="grid w-full grid-cols-4">
+            <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="overview">Overview</TabsTrigger>
-              <TabsTrigger value="installation">Installation</TabsTrigger>
-              <TabsTrigger value="commands">Commands</TabsTrigger>
+              <TabsTrigger value="reviews">Ratings</TabsTrigger>
               <TabsTrigger value="changelog">Changelog</TabsTrigger>
             </TabsList>
             <div className="prose prose-invert mt-6 max-w-none rounded-lg border bg-card p-6">
@@ -101,28 +92,34 @@ export default function PluginDetailPage({ params }: { params: { slug:string } }
                    </div>
                  )}
               </TabsContent>
-              <TabsContent value="installation">
-                 <div dangerouslySetInnerHTML={{ __html: plugin.installation }} />
-              </TabsContent>
-              <TabsContent value="commands">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Command</TableHead>
-                      <TableHead>Description</TableHead>
-                      <TableHead>Permission</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {plugin.commands.map((cmd, i) => (
-                      <TableRow key={i}>
-                        <TableCell><code className="font-code">{cmd.command}</code></TableCell>
-                        <TableCell>{cmd.description}</TableCell>
-                        <TableCell><code className="font-code">{cmd.permission}</code></TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+              <TabsContent value="reviews">
+                <div>
+                  <h3 className="font-headline text-xl font-bold mb-4">Player Reviews</h3>
+                  <div className="space-y-6">
+                    {/* Placeholder for reviews */}
+                    <div className="border-b border-border/50 pb-4">
+                      <div className="flex items-center gap-2">
+                        <h4 className="font-semibold">Steve</h4>
+                        <span className="text-xs text-muted-foreground">★★★★★</span>
+                      </div>
+                      <p className="mt-2 text-sm text-foreground/80">This plugin is amazing! It completely changed how I play on my server. A must-have!</p>
+                    </div>
+                     <div className="border-b border-border/50 pb-4">
+                      <div className="flex items-center gap-2">
+                        <h4 className="font-semibold">Alex</h4>
+                        <span className="text-xs text-muted-foreground">★★★★☆</span>
+                      </div>
+                      <p className="mt-2 text-sm text-foreground/80">Great plugin, works as described. Had a small issue but the developer was very responsive on Discord.</p>
+                    </div>
+                     <div>
+                      <div className="flex items-center gap-2">
+                        <h4 className="font-semibold">Creeper</h4>
+                        <span className="text-xs text-muted-foreground">★★★★★</span>
+                      </div>
+                      <p className="mt-2 text-sm text-foreground/80">Sssssss-uperb!</p>
+                    </div>
+                  </div>
+                </div>
               </TabsContent>
               <TabsContent value="changelog">
                  <div className="space-y-6">
