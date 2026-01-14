@@ -21,7 +21,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { plugins as mockPlugins, getPluginBySlug } from '@/lib/mock-data';
+import { plugins as mockPlugins } from '@/lib/mock-data';
 import type { Plugin } from '@/lib/types';
 
 export default function AdminPage() {
@@ -62,8 +62,7 @@ export default function AdminPage() {
     // In a real app, this would be a server action
     const newDescription = formData.get('description') as string;
     const newIconUrl = formData.get('iconUrl') as string;
-    const newDownloadUrl = formData.get('downloadUrl') as string;
-    console.log({ slug, newDescription, newIconUrl, newDownloadUrl });
+    console.log({ slug, newDescription, newIconUrl });
     alert('Edit plugin functionality is not yet implemented.');
   };
 
@@ -112,10 +111,6 @@ export default function AdminPage() {
                 <div className="grid grid-cols-4 items-center gap-4">
                   <Label htmlFor="iconUrl" className="text-right">Logo URL</Label>
                   <Input id="iconUrl" placeholder="https://example.com/icon.png" className="col-span-3" />
-                </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="downloadUrl" className="text-right">Download URL</Label>
-                  <Input id="downloadUrl" placeholder="https://example.com/plugin.jar" className="col-span-3" />
                 </div>
                 {/* Add other fields as needed */}
                 <Button type="submit">Add Plugin</Button>
@@ -171,22 +166,11 @@ export default function AdminPage() {
                            <div className="grid grid-cols-4 items-center gap-4">
                             <Label htmlFor="iconUrl" className="text-right">
                               Logo URL
-                            </Label>
+                            </                            </Label>
                             <Input
                               id="iconUrl"
                               name="iconUrl"
                               defaultValue={plugin.iconUrl}
-                              className="col-span-3"
-                            />
-                          </div>
-                           <div className="grid grid-cols-4 items-center gap-4">
-                            <Label htmlFor="downloadUrl" className="text-right">
-                              Download URL
-                            </Label>
-                            <Input
-                              id="downloadUrl"
-                              name="downloadUrl"
-                              defaultValue={plugin.downloadUrl || ''}
                               className="col-span-3"
                             />
                           </div>

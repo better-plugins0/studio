@@ -12,7 +12,6 @@ export const plugins: Plugin[] = [
     author: 'PluginDev',
     minecraftVersions: ['1.20.1', '1.19.4', '1.18.2'],
     category: 'Gameplay',
-    downloadUrl: '#',
     gallery: [
       { url: 'https://picsum.photos/seed/summer-forest/800/600', hint: 'summer forest' },
       { url: 'https://picsum.photos/seed/winter-forest/800/600', hint: 'winter forest' },
@@ -37,6 +36,12 @@ export const plugins: Plugin[] = [
     changelog: [
       { version: '1.2.0', changes: ['Added compatibility for Minecraft 1.20.1', 'Fixed a bug with snow accumulation.'] },
       { version: '1.1.0', changes: ['Introduced configurable season lengths.', 'Performance improvements.'] },
+    ],
+    versions: [
+        { gameVersion: "1.21.11", platforms: [{ name: "Paper", downloadUrl: "#" }, { name: "Spigot", downloadUrl: "#" }] },
+        { gameVersion: "1.21.10", platforms: [{ name: "Paper", downloadUrl: "#" }] },
+        { gameVersion: "1.20.4", platforms: [{ name: "Paper", downloadUrl: "#" }, { name: "Spigot", downloadUrl: "#" }] },
+        { gameVersion: "1.19.2", platforms: [{ name: "Paper", downloadUrl: "#" }] },
     ]
   },
   {
@@ -50,7 +55,6 @@ export const plugins: Plugin[] = [
     author: 'SecureCraft',
     minecraftVersions: ['1.20.x', '1.19.x'],
     category: 'Admin',
-    downloadUrl: '#',
     gallery: [
       { url: 'https://picsum.photos/seed/secure-ui/800/600', hint: 'security interface' },
     ],
@@ -75,6 +79,10 @@ export const plugins: Plugin[] = [
     changelog: [
       { version: '2.5.1', changes: ['Added session timeout feature.', 'Improved password hashing security.'] },
       { version: '2.4.0', changes: ['Initial release for Minecraft 1.20.'] },
+    ],
+    versions: [
+        { gameVersion: "1.21.11", platforms: [{ name: "Paper", downloadUrl: "#" }] },
+        { gameVersion: "1.20.4", platforms: [{ name: "Paper", downloadUrl: "#" }] },
     ]
   },
   {
@@ -88,12 +96,14 @@ export const plugins: Plugin[] = [
     author: 'EconoDev',
     minecraftVersions: ['1.20.1', '1.19.4'],
     category: 'Economy',
-    downloadUrl: '#',
     gallery: [],
     overview: `<p>A complete economy solution.</p>`,
     installation: `<p>Drop the jar in your plugins folder.</p>`,
     commands: [{ command: '/bal', description: 'Check balance.', permission: 'bettereconomy.balance' }],
-    changelog: [{ version: '3.0.0', changes: ['Full rewrite for performance.'] }]
+    changelog: [{ version: '3.0.0', changes: ['Full rewrite for performance.'] }],
+    versions: [
+      { gameVersion: "1.20.1", platforms: [{ name: "Paper", downloadUrl: "#" }] }
+    ]
   },
   {
     id: '4',
@@ -106,12 +116,14 @@ export const plugins: Plugin[] = [
     author: 'PluginDev',
     minecraftVersions: ['1.20.x', '1.19.x', '1.18.x'],
     category: 'Utility',
-    downloadUrl: '#',
     gallery: [],
     overview: `<p>Customize your chat experience.</p>`,
     installation: `<p>Drop the jar in your plugins folder.</p>`,
     commands: [{ command: '/channel <name>', description: 'Switch chat channel.', permission: 'betterchat.channel.switch' }],
-    changelog: [{ version: '1.5.0', changes: ['Added chat filtering.'] }]
+    changelog: [{ version: '1.5.0', changes: ['Added chat filtering.'] }],
+    versions: [
+      { gameVersion: "1.20.4", platforms: [{ name: "Paper", downloadUrl: "#" }] }
+    ]
   },
 ];
 

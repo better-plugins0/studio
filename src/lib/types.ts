@@ -5,7 +5,6 @@ export type Plugin = {
   description: string;
   longDescription: string;
   iconUrl: string;
-  downloadUrl?: string; // Optional download URL for the JAR file
   downloads: number;
   author: string;
   minecraftVersions: string[];
@@ -18,4 +17,11 @@ export type Plugin = {
   installation: string;
   commands: { command: string; description: string; permission: string }[];
   changelog: { version: string; changes: string[] }[];
+  versions: {
+    gameVersion: string;
+    platforms: {
+      name: 'Paper' | 'Spigot' | 'Forge' | 'Fabric';
+      downloadUrl: string;
+    }[];
+  }[];
 };
