@@ -58,9 +58,13 @@ export default function AdminPage() {
     alert('Add plugin functionality is not yet implemented.');
   };
 
-  const handleEditDescription = (slug: string, newDescription: string) => {
+  const handleEditPlugin = (slug: string, formData: FormData) => {
     // In a real app, this would be a server action
-    alert('Edit description functionality is not yet implemented.');
+    const newDescription = formData.get('description') as string;
+    const newIconUrl = formData.get('iconUrl') as string;
+    const newDownloadUrl = formData.get('downloadUrl') as string;
+    console.log({ slug, newDescription, newIconUrl, newDownloadUrl });
+    alert('Edit plugin functionality is not yet implemented.');
   };
 
   if (!isMounted || !isLoggedIn) {
@@ -105,6 +109,14 @@ export default function AdminPage() {
                   <Label htmlFor="description" className="text-right">Description</Label>
                   <Textarea id="description" className="col-span-3" />
                 </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="iconUrl" className="text-right">Logo URL</Label>
+                  <Input id="iconUrl" placeholder="https://example.com/icon.png" className="col-span-3" />
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="downloadUrl" className="text-right">Download URL</Label>
+                  <Input id="downloadUrl" placeholder="https://example.com/plugin.jar" className="col-span-3" />
+                </div>
                 {/* Add other fields as needed */}
                 <Button type="submit">Add Plugin</Button>
               </form>
@@ -117,6 +129,7 @@ export default function AdminPage() {
             <TableHeader>
               <TableRow>
                 <TableHead>Plugin Name</TableHead>
+                <TableHead>Slug</TableHead>
                 <TableHead>Description</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
@@ -125,22 +138,22 @@ export default function AdminPage() {
               {plugins.map((plugin) => (
                 <TableRow key={plugin.id}>
                   <TableCell className="font-medium">{plugin.name}</TableCell>
+                  <TableCell className="font-mono text-xs">{plugin.slug}</TableCell>
                   <TableCell className="max-w-md truncate">{plugin.description}</TableCell>
                   <TableCell className="text-right">
                     <Dialog>
                       <DialogTrigger asChild>
                         <Button variant="outline">Edit</Button>
                       </DialogTrigger>
-                      <DialogContent className="sm:max-w-[425px]">
+                      <DialogContent className="sm:max-w-[600px]">
                         <DialogHeader>
-                          <DialogTitle>Edit Description for {plugin.name}</DialogTitle>
+                          <DialogTitle>Edit Plugin: {plugin.name}</DialogTitle>
                         </DialogHeader>
                         <form
                           onSubmit={(e) => {
                             e.preventDefault();
                             const formData = new FormData(e.currentTarget);
-                            const newDescription = formData.get('description') as string;
-                            handleEditDescription(plugin.slug, newDescription);
+                            handleEditPlugin(plugin.slug, formData);
                           }}
                           className="grid gap-4 py-4"
                         >
@@ -152,6 +165,28 @@ export default function AdminPage() {
                               id="description"
                               name="description"
                               defaultValue={plugin.description}
+                              className="col-span-3"
+                            />
+                          </div>
+                           <div className="grid grid-cols-4 items-center gap-4">
+                            <Label htmlFor="iconUrl" className="text-right">
+                              Logo URL
+                            </Label>
+                            <Input
+                              id="iconUrl"
+                              name="iconUrl"
+                              defaultValue={plugin.iconUrl}
+                              className="col-span-3"
+                            />
+                          </div>
+                           <div className="grid grid-cols-4 items-center gap-4">
+                            <Label htmlFor="downloadUrl" className="text-right">
+                              Download URL
+                            </Label>
+                            <Input
+                              id="downloadUrl"
+                              name="downloadUrl"
+                              defaultValue={plugin.downloadUrl || ''}
                               className="col-span-3"
                             />
                           </div>

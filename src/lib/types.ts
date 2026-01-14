@@ -5,6 +5,7 @@ export type Plugin = {
   description: string;
   longDescription: string;
   iconUrl: string;
+  downloadUrl?: string; // Optional download URL for the JAR file
   downloads: number;
   author: string;
   minecraftVersions: string[];

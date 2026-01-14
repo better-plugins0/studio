@@ -20,6 +20,8 @@ import {
 } from "@/components/ui/table";
 import type { Metadata } from "next";
 import type { Plugin } from "@/lib/types";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import Link from "next/link";
 
 type Props = {
   params: { slug: string };
@@ -74,8 +76,10 @@ export default function PluginDetailPage({ params }: { params: { slug:string } }
             ))}
             <Badge variant="outline">{plugin.category}</Badge>
           </div>
-          <Button size="lg" className="mt-6 transition-transform duration-300 hover:scale-105 hover:shadow-lg hover:shadow-primary/30">
-            <Download className="mr-2 h-5 w-5" /> Download Latest
+          <Button asChild size="lg" className="mt-6 transition-transform duration-300 hover:scale-105 hover:shadow-lg hover:shadow-primary/30">
+            <Link href={plugin.downloadUrl || '#'} target="_blank" rel="noopener noreferrer">
+              <Download className="mr-2 h-5 w-5" /> Download Latest
+            </Link>
           </Button>
         </div>
       </header>
