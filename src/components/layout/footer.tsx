@@ -9,7 +9,7 @@ export function Footer() {
         <div className="grid grid-cols-1 gap-8 py-12 md:grid-cols-3">
           <div className="flex flex-col items-start gap-4">
             <Link href="/" className="flex items-center gap-3">
-              <Logo />
+              <Logo width={40} height={40} />
               <span className="font-headline text-2xl font-bold">BetterPlugins</span>
             </Link>
             <p className="max-w-xs text-sm text-muted-foreground">

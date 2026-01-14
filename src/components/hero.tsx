@@ -15,7 +15,7 @@ export function Hero() {
       </div>
       <div className="container relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-3xl text-center">
-          <Logo className="mx-auto h-20 w-20 md:h-24 md:w-24" />
+          <Logo className="mx-auto h-20 w-20 md:h-24 md:w-24" width={96} height={96} />
           <h1 className="mt-6 font-headline text-4xl font-bold tracking-tight text-foreground sm:text-5xl md:text-6xl">
             BETTERPLUGINS <span className="text-primary">HUB</span>
           </h1>
