@@ -8,7 +8,7 @@ import {
   TabsTrigger,
 } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Server } from "lucide-react";
+import { Server, History } from "lucide-react";
 import type { Metadata } from "next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DownloadDialog } from "@/components/download-dialog";
@@ -44,6 +44,9 @@ export default function PluginDetailPage({ params }: { params: { slug:string } }
   if (!plugin) {
     notFound();
   }
+
+  // Get unique game versions for display
+  const uniqueGameVersions = [...new Set(plugin.versions.map(v => v.gameVersion.split('.')[0] + '.' + v.gameVersion.split('.')[1]))];
 
   return (
     <div className="container mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
@@ -154,6 +157,26 @@ export default function PluginDetailPage({ params }: { params: { slug:string } }
                 <span className="text-muted-foreground">Author</span>
                 <span>{plugin.author}</span>
               </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <History className="h-5 w-5" />
+                Versions
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {plugin.versions.map((version) => (
+                <div key={version.gameVersion} className="flex justify-between items-center text-sm">
+                  <span className="font-medium text-foreground">{version.gameVersion}</span>
+                  <div className="flex gap-1.5">
+                    {version.platforms.map(platform => (
+                      <Badge key={platform.name} variant="outline" className="text-xs">{platform.name}</Badge>
+                    ))}
+                  </div>
+                </div>
+              ))}
             </CardContent>
           </Card>
         </aside>
