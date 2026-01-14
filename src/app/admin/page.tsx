@@ -112,6 +112,10 @@ export default function AdminPage() {
                   <Label htmlFor="iconUrl" className="text-right">Logo URL</Label>
                   <Input id="iconUrl" placeholder="https://example.com/icon.png" className="col-span-3" />
                 </div>
+                 <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="downloadUrl" className="text-right">Download URL</Label>
+                  <Input id="downloadUrl" placeholder="https://example.com/plugin.jar" className="col-span-3" />
+                </div>
                 {/* Add other fields as needed */}
                 <Button type="submit">Add Plugin</Button>
               </form>
@@ -166,11 +170,22 @@ export default function AdminPage() {
                            <div className="grid grid-cols-4 items-center gap-4">
                             <Label htmlFor="iconUrl" className="text-right">
                               Logo URL
-                            </                            </Label>
+                            </Label>
                             <Input
                               id="iconUrl"
                               name="iconUrl"
                               defaultValue={plugin.iconUrl}
+                              className="col-span-3"
+                            />
+                          </div>
+                           <div className="grid grid-cols-4 items-center gap-4">
+                            <Label htmlFor="downloadUrl" className="text-right">
+                              Download URL
+                            </Label>
+                            <Input
+                              id="downloadUrl"
+                              name="downloadUrl"
+                              defaultValue={plugin.versions[0]?.platforms[0]?.downloadUrl || ''}
                               className="col-span-3"
                             />
                           </div>
