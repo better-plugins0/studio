@@ -2,13 +2,23 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, X } from "lucide-react";
+import { Menu, X, LogOut, Settings } from "lucide-react";
 import { useState } from "react";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Logo } from "@/components/icons/logo";
+import { useAuth } from "@/context/AuthContext";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Badge } from "@/components/ui/badge";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -21,6 +31,7 @@ const navLinks = [
 export function Navbar() {
   const pathname = usePathname();
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { user, isAdmin, logout } = useAuth();
 
   const renderLink = (link: typeof navLinks[0], isMobile = false) => {
     const isActive = !link.external && pathname === link.href;
@@ -45,6 +56,10 @@ export function Navbar() {
     );
   };
 
+  const handleLogout = () => {
+    logout();
+  };
+
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-sm">
       <div className="container mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
@@ -56,6 +71,47 @@ export function Navbar() {
         <nav className="hidden items-center gap-6 md:flex">
           {navLinks.map((link) => renderLink(link))}
         </nav>
+
+        <div className="hidden items-center gap-4 md:flex">
+          {user && isAdmin ? (
+            <>
+              <Button asChild variant="default" size="sm">
+                <Link href="/admin">
+                  <Settings className="mr-2 h-4 w-4" />
+                  Admin Panel
+                </Link>
+              </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm">
+                    {user.username}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuLabel className="text-xs">
+                    Logged in as <strong>{user.username}</strong>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link href="/admin">Admin Dashboard</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleLogout}>
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </>
+          ) : (
+            <Button asChild size="sm">
+              <Link href="/admin/login">
+                <Settings className="mr-2 h-4 w-4" />
+                Admin Login
+              </Link>
+            </Button>
+          )}
+        </div>
 
         <div className="md:hidden">
           <Sheet open={isMobileMenuOpen} onOpenChange={setMobileMenuOpen}>
@@ -83,6 +139,27 @@ export function Navbar() {
                 <nav className="mt-8 flex flex-col items-center gap-6">
                   {navLinks.map((link) => renderLink(link, true))}
                 </nav>
+                <div className="mt-auto flex flex-col gap-3 border-t pt-4">
+                  {user && isAdmin ? (
+                    <>
+                      <div className="flex items-center justify-between px-2 py-2 bg-muted/50 rounded-lg">
+                        <Badge variant="outline">Admin</Badge>
+                        <span className="text-sm font-medium">{user.username}</span>
+                      </div>
+                      <Button asChild variant="default" size="sm" className="w-full">
+                        <Link href="/admin">Admin Dashboard</Link>
+                      </Button>
+                      <Button onClick={handleLogout} variant="destructive" size="sm" className="w-full">
+                        <LogOut className="mr-2 h-4 w-4" />
+                        Logout
+                      </Button>
+                    </>
+                  ) : (
+                    <Button asChild size="sm" className="w-full">
+                      <Link href="/admin/login">Admin Login</Link>
+                    </Button>
+                  )}
+                </div>
               </div>
             </SheetContent>
           </Sheet>
