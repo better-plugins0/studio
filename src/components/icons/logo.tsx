@@ -4,7 +4,7 @@ import Image from "next/image";
 export function Logo({ className, ...props }: Omit<React.ComponentProps<typeof Image>, 'src' | 'alt'>) {
   return (
     <Image
-      src="https://picsum.photos/seed/logo/200/200"
+      src="https://i.postimg.cc/7ZZnN3Hc/chatgpt-image-latest-(20251216)-b-REMOVE-THIS-IMAGE-BA.png"
       alt="BetterPlugins Hub Logo"
       width={100}
       height={100}
