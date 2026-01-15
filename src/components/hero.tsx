@@ -9,9 +9,9 @@ export function Hero() {
       <div className="container relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-3xl text-center">
           <Logo
-            width={400}
-            height={400}
-            className="mx-auto mb-8 h-64 w-64 sm:h-72 sm:w-72 md:h-80 md:w-80"
+            width={300}
+            height={300}
+            className="mx-auto mb-8 h-48 w-48 sm:h-56 sm:w-56 md:h-64 md:w-64"
           />
           <h1 className="mt-6 font-headline text-5xl font-bold tracking-tight text-foreground sm:text-6xl md:text-7xl">
             BETTER <span className="text-primary">PLUGINS HUB</span>
@@ -27,8 +27,9 @@ export function Hero() {
               </Link>
             </Button>
             <Button asChild size="lg" variant="outline" className="transition-transform duration-300 hover:scale-105 bg-transparent hover:bg-primary/10">
-              <Link href="/docs">
-                Documentation
+              <Link href="https://discord.gg/F55ErnrPB9" target="_blank" rel="noopener noreferrer">
+                <MessageSquare className="mr-2 h-5 w-5" />
+                Join our Discord
               </Link>
             </Button>
           </div>
