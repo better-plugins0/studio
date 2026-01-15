@@ -4,13 +4,13 @@
 
 @layer base {
   :root {
-    --background: 215 30% 9%;
+    --background: 220 40% 8%;
     --foreground: 0 0% 98%;
-    --card: 215 25% 12%;
+    --card: 215 28% 17%;
     --card-foreground: 0 0% 98%;
     --popover: 215 30% 9%;
     --popover-foreground: 0 0% 98%;
-    --primary: 145 70% 50%;
+    --primary: 145 65% 55%;
     --primary-foreground: 215 30% 9%;
     --secondary: 145 60% 40%;
     --secondary-foreground: 0 0% 98%;
@@ -32,13 +32,13 @@
   }
 
   .dark {
-    --background: 215 30% 9%;
+    --background: 220 40% 8%;
     --foreground: 0 0% 98%;
-    --card: 215 25% 12%;
+    --card: 215 28% 17%;
     --card-foreground: 0 0% 98%;
     --popover: 215 30% 9%;
     --popover-foreground: 0 0% 98%;
-    --primary: 145 70% 50%;
+    --primary: 145 65% 55%;
     --primary-foreground: 215 30% 9%;
     --secondary: 145 60% 40%;
     --secondary-foreground: 0 0% 98%;
@@ -64,9 +64,8 @@
     @apply border-border;
   }
   body {
-    @apply text-foreground;
-    background-color: hsl(220, 40%, 8%);
-    background-image: radial-gradient(ellipse 80% 80% at 50% -20%, hsla(160, 100%, 30%, 0.3), hsla(220, 40%, 8%, 0));
+    @apply bg-background text-foreground;
+    background-image: radial-gradient(ellipse 80% 80% at 50% -20%, hsla(145, 65%, 55%, 0.3), hsla(220, 40%, 8%, 0));
     background-attachment: fixed;
   }
 }
