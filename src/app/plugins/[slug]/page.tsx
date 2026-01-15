@@ -12,6 +12,7 @@ import { Server, History } from "lucide-react";
 import type { Metadata } from "next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DownloadDialog } from "@/components/download-dialog";
+import { RatingForm } from "@/components/rating-form";
 
 type Props = {
   params: { slug: string };
@@ -97,6 +98,9 @@ export default function PluginDetailPage({ params }: { params: { slug:string } }
               </TabsContent>
               <TabsContent value="reviews">
                 <div>
+                  <h3 className="font-headline text-xl font-bold mb-4">Leave a Review</h3>
+                  <RatingForm />
+                  <div className="my-8 border-b border-border/50"></div>
                   <h3 className="font-headline text-xl font-bold mb-4">Player Reviews</h3>
                   <div className="space-y-6">
                     {/* Placeholder for reviews */}
