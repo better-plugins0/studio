@@ -1,3 +1,5 @@
+'use client';
+
 import { plugins } from "@/lib/mock-data";
 import { PluginCard } from "@/components/plugin-card";
 import { cn } from "@/lib/utils";

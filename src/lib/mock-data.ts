@@ -1,4 +1,17 @@
 import type { Plugin } from './types';
+import { PlaceHolderImages } from './placeholder-images';
+
+const getImage = (id: string) => {
+  return PlaceHolderImages.find(img => img.id === id)?.imageUrl || `https://picsum.photos/seed/${id}/256/256`;
+};
+
+const getGalleryImage = (id: string, hint: string) => {
+  const img = PlaceHolderImages.find(img => img.id === id);
+  return {
+    url: img?.imageUrl || `https://picsum.photos/seed/${id}/800/600`,
+    hint: img?.imageHint || hint,
+  };
+};
 
 export const plugins: Plugin[] = [
   {
@@ -7,15 +20,15 @@ export const plugins: Plugin[] = [
     slug: 'better-seasons',
     description: 'A dynamic seasons system that changes the world.',
     longDescription: 'Bring your Minecraft world to life with dynamic seasons. Watch as landscapes transform from lush summer greens to snowy winter wonderlands. BetterSeasons affects plant growth, weather, and mob behavior to create a truly immersive experience.',
-    iconUrl: 'https://picsum.photos/seed/seasons/256/256',
+    iconUrl: getImage('plugin-icon-seasons'),
     downloads: 150234,
     author: 'PluginDev',
     minecraftVersions: ['1.20.1', '1.19.4', '1.18.2'],
     category: 'Gameplay',
     gallery: [
-      { url: 'https://picsum.photos/seed/summer-forest/800/600', hint: 'summer forest' },
-      { url: 'https://picsum.photos/seed/winter-forest/800/600', hint: 'winter forest' },
-      { url: 'https://picsum.photos/seed/autumn-forest/800/600', hint: 'autumn leaves' },
+      getGalleryImage('gallery-seasons-1', 'summer forest'),
+      getGalleryImage('gallery-seasons-2', 'winter forest'),
+      getGalleryImage('gallery-seasons-3', 'autumn leaves'),
     ],
     overview: `
       <h3 class="font-headline text-xl font-bold mb-2">Immerse Your Players in a Living World</h3>
@@ -38,13 +51,13 @@ export const plugins: Plugin[] = [
     slug: 'better-login',
     description: 'A secure and customizable login system for your server.',
     longDescription: 'Protect your server from unauthorized access with BetterLogin. This plugin requires players to register with a password and log in each time they join, ensuring that only legitimate users can access their accounts.',
-    iconUrl: 'https://picsum.photos/seed/login/256/256',
+    iconUrl: getImage('plugin-icon-login'),
     downloads: 210450,
     author: 'SecureCraft',
     minecraftVersions: ['1.20.x', '1.19.x'],
     category: 'Admin',
     gallery: [
-      { url: 'https://picsum.photos/seed/secure-ui/800/600', hint: 'security interface' },
+      getGalleryImage('gallery-login-1', 'security interface'),
     ],
     overview: `
       <h3 class="font-headline text-xl font-bold mb-2">The Ultimate Security for Your Server</h3>
@@ -65,7 +78,7 @@ export const plugins: Plugin[] = [
     slug: 'better-economy',
     description: 'A complete and flexible economy plugin.',
     longDescription: 'Create a thriving server economy with BetterEconomy. Features include player balances, shops, auctions, and full Vault integration. Easy to use for players and powerful for admins.',
-    iconUrl: 'https://picsum.photos/seed/economy/256/256',
+    iconUrl: getImage('plugin-icon-economy'),
     downloads: 350812,
     author: 'EconoDev',
     minecraftVersions: ['1.20.1', '1.19.4'],
@@ -83,7 +96,7 @@ export const plugins: Plugin[] = [
     slug: 'better-chat',
     description: 'Format your chat with prefixes, suffixes, and colors.',
     longDescription: 'Take control of your server\'s chat with BetterChat. Add prefixes and suffixes based on permissions, create custom chat channels, and enable color codes for different player groups. Fully configurable and lightweight.',
-    iconUrl: 'https://picsum.photos/seed/chat/256/256',
+    iconUrl: getImage('plugin-icon-chat'),
     downloads: 180321,
     author: 'PluginDev',
     minecraftVersions: ['1.20.x', '1.19.x', '1.18.x'],
