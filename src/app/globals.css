@@ -57,6 +57,7 @@
     @apply bg-background text-foreground;
     background-image: radial-gradient(ellipse 80% 80% at 50% -20%, hsl(142 71% 45% / 0.15), transparent);
     background-attachment: fixed;
+    animation: background-glow 10s ease-in-out infinite alternate;
   }
 }
 
@@ -73,5 +74,14 @@
 
   .scrolling-animation {
     animation: scroll 20s linear infinite;
+  }
+
+  @keyframes background-glow {
+    from {
+      background-image: radial-gradient(ellipse 80% 80% at 50% -20%, hsl(142 71% 45% / 0.1), transparent);
+    }
+    to {
+      background-image: radial-gradient(ellipse 80% 80% at 50% -20%, hsl(142 71% 45% / 0.2), transparent);
+    }
   }
 }
