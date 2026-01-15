@@ -28,7 +28,7 @@ export function Footer() {
             <div>
               <h3 className="font-headline text-sm font-semibold uppercase tracking-wider">Community</h3>
               <ul className="mt-4 space-y-2">
-                <li><a href="#" className="text-sm text-muted-foreground hover:text-primary">Discord</a></li>
+                <li><a href="https://discord.gg/F55ErnrPB9" target="_blank" rel="noopener noreferrer" className="text-sm text-muted-foreground hover:text-primary">Discord</a></li>
                 <li><a href="#" className="text-sm text-muted-foreground hover:text-primary">GitHub</a></li>
                 <li><a href="#" className="text-sm text-muted-foreground hover:text-primary">YouTube</a></li>
               </ul>
@@ -40,7 +40,7 @@ export function Footer() {
             &copy; {new Date().getFullYear()} BetterPlugins Hub. All rights reserved.
           </p>
           <div className="mt-4 flex items-center gap-4 md:mt-0">
-            <a href="#" className="text-muted-foreground hover:text-primary"><MessageSquare className="h-5 w-5" /></a>
+            <a href="https://discord.gg/F55ErnrPB9" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary"><MessageSquare className="h-5 w-5" /></a>
             <a href="#" className="text-muted-foreground hover:text-primary"><Github className="h-5 w-5" /></a>
             <a href="#" className="text-muted-foreground hover:text-primary"><Youtube className="h-5 w-5" /></a>
           </div>

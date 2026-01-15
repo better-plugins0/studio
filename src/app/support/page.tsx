@@ -24,7 +24,7 @@ export default function SupportPage() {
           The best place to get real-time support is our Discord server. Join our community of developers and users for quick assistance.
         </p>
         <Button asChild size="lg">
-          <Link href="https://discord.gg/" target="_blank" rel="noopener noreferrer">
+          <Link href="https://discord.gg/F55ErnrPB9" target="_blank" rel="noopener noreferrer">
             <MessageSquare className="mr-2 h-5 w-5" />
             Join our Discord
           </Link>

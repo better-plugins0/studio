@@ -15,7 +15,7 @@ const navLinks = [
   { href: "/plugins", label: "Plugins" },
   { href: "/docs", label: "Docs" },
   { href: "/support", label: "Support" },
-  { href: "https://discord.gg/", label: "Discord", external: true },
+  { href: "https://discord.gg/F55ErnrPB9", label: "Discord", external: true },
 ];
 
 export function Navbar() {
