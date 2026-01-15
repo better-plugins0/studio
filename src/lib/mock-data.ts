@@ -1,12 +1,15 @@
+
 import type { Plugin } from './types';
-import { PlaceHolderImages } from './placeholder-images';
+import placeholderData from './placeholder-images.json';
+
+const { placeholderImages } = placeholderData;
 
 const getImage = (id: string) => {
-  return PlaceHolderImages.find(img => img.id === id)?.imageUrl || `https://picsum.photos/seed/${id}/256/256`;
+  return placeholderImages.find(img => img.id === id)?.imageUrl || `https://picsum.photos/seed/${id}/256/256`;
 };
 
 const getGalleryImage = (id: string, hint: string) => {
-  const img = PlaceHolderImages.find(img => img.id === id);
+  const img = placeholderImages.find(img => img.id === id);
   return {
     url: img?.imageUrl || `https://picsum.photos/seed/${id}/800/600`,
     hint: img?.imageHint || hint,
@@ -31,7 +34,7 @@ export const plugins: Plugin[] = [
       getGalleryImage('gallery-seasons-3', 'autumn leaves'),
     ],
     overview: `
-      <h3 class="font-headline text-xl font-bold mb-2">Immerse Your Players in a Living World</h3>
+      <h3>Immerse Your Players in a Living World</h3>
       <p>BetterSeasons is a comprehensive seasons plugin designed for Paper servers. It introduces four distinct seasons—Spring, Summer, Autumn, and Winter—each with unique effects on the environment and gameplay mechanics. From changing foliage colors to adjusted crop growth rates, this plugin adds a new layer of realism and challenge to your server.</p>
     `,
     changelog: [
@@ -60,7 +63,7 @@ export const plugins: Plugin[] = [
       getGalleryImage('gallery-login-1', 'security interface'),
     ],
     overview: `
-      <h3 class="font-headline text-xl font-bold mb-2">The Ultimate Security for Your Server</h3>
+      <h3>The Ultimate Security for Your Server</h3>
       <p>BetterLogin is an essential utility for any public Minecraft server. It provides a robust authentication system to prevent griefing and account theft. With extensive configuration options, you can tailor the login experience to match your server's theme and security needs.</p>
     `,
     changelog: [
