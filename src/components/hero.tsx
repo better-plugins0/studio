@@ -8,11 +8,16 @@ export function Hero() {
     <section className="relative overflow-hidden py-24 md:py-32 lg:py-40">
       <div className="container relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-3xl text-center">
+          <Logo
+            width={300}
+            height={300}
+            className="mx-auto mb-8 h-48 w-48 sm:h-56 sm:w-56 md:h-64 md:w-64"
+          />
           <h1 className="mt-6 font-headline text-5xl font-bold tracking-tight text-foreground sm:text-6xl md:text-7xl">
             BETTER <span className="text-primary">PLUGINS HUB</span>
           </h1>
           <p className="mt-6 text-lg leading-8 text-muted-foreground text-balance">
-            Supercharge your server with premium, optimized plugins. Designed for performance, built for fun.
+            Download Best Minecraft Plugins
           </p>
           <div className="mt-10 flex items-center justify-center gap-x-6">
             <Button asChild size="lg" className="transition-transform duration-300 hover:scale-105 hover:shadow-lg hover:shadow-primary/30">
