@@ -4,25 +4,25 @@
 
 @layer base {
   :root {
-    --background: 140 80% 4%;
+    --background: 215 30% 9%;
     --foreground: 0 0% 98%;
-    --card: 140 70% 8%;
+    --card: 215 25% 12%;
     --card-foreground: 0 0% 98%;
-    --popover: 140 80% 4%;
+    --popover: 215 30% 9%;
     --popover-foreground: 0 0% 98%;
-    --primary: 130 95% 55%;
-    --primary-foreground: 140 80% 4%;
-    --secondary: 130 85% 50%;
+    --primary: 145 70% 50%;
+    --primary-foreground: 215 30% 9%;
+    --secondary: 145 60% 40%;
     --secondary-foreground: 0 0% 98%;
-    --muted: 140 30% 15%;
+    --muted: 215 20% 18%;
     --muted-foreground: 0 0% 63.9%;
-    --accent: 130 95% 55%;
+    --accent: 145 70% 50%;
     --accent-foreground: 0 0% 98%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
-    --border: 140 30% 15%;
-    --input: 140 30% 15%;
-    --ring: 130 95% 55%;
+    --border: 215 20% 18%;
+    --input: 215 20% 18%;
+    --ring: 145 70% 50%;
     --chart-1: 220 70% 50%;
     --chart-2: 160 60% 45%;
     --chart-3: 30 80% 55%;
@@ -32,25 +32,25 @@
   }
 
   .dark {
-    --background: 140 80% 4%;
+    --background: 215 30% 9%;
     --foreground: 0 0% 98%;
-    --card: 140 70% 8%;
+    --card: 215 25% 12%;
     --card-foreground: 0 0% 98%;
-    --popover: 140 80% 4%;
+    --popover: 215 30% 9%;
     --popover-foreground: 0 0% 98%;
-    --primary: 130 95% 55%;
-    --primary-foreground: 140 80% 4%;
-    --secondary: 130 85% 50%;
+    --primary: 145 70% 50%;
+    --primary-foreground: 215 30% 9%;
+    --secondary: 145 60% 40%;
     --secondary-foreground: 0 0% 98%;
-    --muted: 140 30% 15%;
+    --muted: 215 20% 18%;
     --muted-foreground: 0 0% 63.9%;
-    --accent: 130 95% 55%;
+    --accent: 145 70% 50%;
     --accent-foreground: 0 0% 98%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
-    --border: 140 30% 15%;
-    --input: 140 30% 15%;
-    --ring: 130 95% 55%;
+    --border: 215 20% 18%;
+    --input: 215 20% 18%;
+    --ring: 145 70% 50%;
     --chart-1: 220 70% 50%;
     --chart-2: 160 60% 45%;
     --chart-3: 30 80% 55%;
@@ -65,11 +65,9 @@
   }
   body {
     @apply text-foreground;
-    background-color: hsl(var(--background));
-    background-image: url('https://i.imgur.com/7T1h339.png');
-    background-size: cover;
+    background-color: hsl(220, 40%, 8%);
+    background-image: radial-gradient(ellipse 80% 80% at 50% -20%, hsla(160, 100%, 30%, 0.3), hsla(220, 40%, 8%, 0));
     background-attachment: fixed;
-    background-position: center;
   }
 }
 
