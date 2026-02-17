@@ -1,4 +1,5 @@
 import { Hero } from "@/components/hero";
+import { Features } from "@/components/features";
 import { PluginCarousel } from "@/components/plugin-carousel";
 
 export default function Home() {
@@ -7,6 +8,7 @@ export default function Home() {
       <Hero />
       <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-24 py-16">
         <PluginCarousel />
+        <Features />
       </div>
     </div>
   );
