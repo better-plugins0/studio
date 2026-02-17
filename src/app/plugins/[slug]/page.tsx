@@ -90,7 +90,7 @@ export default function PluginDetailPage({ params }: { params: { slug:string } }
                      <h3 className="font-headline text-xl font-bold mb-4">Gallery</h3>
                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                        {plugin.gallery.map((img, index) => (
-                         <Image key={index} src={img.url} alt={`Gallery image ${index + 1}`} width={800} height={600} className="rounded-lg object-cover" data-ai-hint={img.hint} />
+                         <Image key={index} src={img.url} alt={`Gallery image ${index + 1}`} width={800} height={450} className="rounded-lg object-cover" data-ai-hint={img.hint} />
                        ))}
                      </div>
                    </div>

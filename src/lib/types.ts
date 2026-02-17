@@ -20,7 +20,7 @@ export type Plugin = {
   versions: {
     gameVersion: string;
     platforms: {
-      name: 'Paper' | 'Spigot' | 'Bukkit' | 'Forge' | 'Fabric' | 'NeoForge' | 'Quilt';
+      name: 'Paper' | 'Spigot' | 'Bukkit';
       downloadUrl: string;
     }[];
   }[];
