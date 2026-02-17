@@ -6,9 +6,11 @@ export default function Home() {
   return (
     <div className="flex flex-col">
       <Hero />
-      <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-24 py-16">
+      <div className="w-full space-y-24 py-16">
         <PluginCarousel />
-        <Features />
+        <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <Features />
+        </div>
       </div>
     </div>
   );
