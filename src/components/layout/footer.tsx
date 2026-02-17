@@ -23,6 +23,7 @@ export function Footer() {
                 <li><Link href="/plugins" className="text-sm text-muted-foreground hover:text-primary">Plugins</Link></li>
                 <li><Link href="/docs" className="text-sm text-muted-foreground hover:text-primary">Docs</Link></li>
                 <li><Link href="/support" className="text-sm text-muted-foreground hover:text-primary">Support</Link></li>
+                <li><Link href="/teams" className="text-sm text-muted-foreground hover:text-primary">Teams</Link></li>
               </ul>
             </div>
             <div>
@@ -31,6 +32,13 @@ export function Footer() {
                 <li><a href="https://discord.gg/F55ErnrPB9" target="_blank" rel="noopener noreferrer" className="text-sm text-muted-foreground hover:text-primary">Discord</a></li>
                 <li><a href="#" className="text-sm text-muted-foreground hover:text-primary">GitHub</a></li>
                 <li><a href="#" className="text-sm text-muted-foreground hover:text-primary">YouTube</a></li>
+              </ul>
+            </div>
+             <div>
+              <h3 className="font-headline text-sm font-semibold uppercase tracking-wider">Legal</h3>
+              <ul className="mt-4 space-y-2">
+                <li><Link href="/privacy" className="text-sm text-muted-foreground hover:text-primary">Privacy Policy</Link></li>
+                <li><Link href="/terms" className="text-sm text-muted-foreground hover:text-primary">Terms of Service</Link></li>
               </ul>
             </div>
           </div>
