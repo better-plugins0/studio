@@ -55,9 +55,12 @@
   }
   body {
     @apply bg-background text-foreground;
-    background-image: radial-gradient(ellipse 80% 80% at 50% -20%, hsl(142 71% 45% / 0.15), transparent);
+    background-image: 
+      radial-gradient(ellipse 80% 50% at 50% -20%, hsl(var(--primary) / 0.1), transparent),
+      radial-gradient(ellipse 40% 40% at 20% 70%, hsl(var(--primary) / 0.08), transparent),
+      radial-gradient(ellipse 30% 30% at 80% 90%, hsl(var(--primary) / 0.07), transparent);
     background-attachment: fixed;
-    animation: background-glow 10s ease-in-out infinite alternate;
+    animation: background-move 15s ease-in-out infinite alternate;
   }
 }
 
@@ -76,12 +79,12 @@
     animation: scroll 20s linear infinite;
   }
 
-  @keyframes background-glow {
+  @keyframes background-move {
     from {
-      background-image: radial-gradient(ellipse 80% 80% at 50% -20%, hsl(142 71% 45% / 0.1), transparent);
+      background-position: 50% -20%, 20% 70%, 80% 90%;
     }
     to {
-      background-image: radial-gradient(ellipse 80% 80% at 50% -20%, hsl(142 71% 45% / 0.2), transparent);
+      background-position: 50% -10%, 25% 80%, 75% 80%;
     }
   }
 }
