@@ -21,7 +21,7 @@ export function PluginCarousel() {
         className="group relative w-full overflow-hidden"
         style={{ maskImage: "linear-gradient(to right, transparent, white 10%, white 90%, transparent)" }}
       >
-        <div className="flex w-max gap-4 group-hover:[animation-play-state:paused] scrolling-animation">
+        <div className="flex w-max gap-4 py-4 group-hover:[animation-play-state:paused] scrolling-animation">
           {allPlugins.map((plugin, index) => (
             <PluginCard
               key={`${plugin.id}-${index}`}
