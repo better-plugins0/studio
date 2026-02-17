@@ -6,20 +6,21 @@ export type Plugin = {
   longDescription: string;
   iconUrl: string;
   downloads: number;
+  likes: number;
+  lastUpdated: string;
   author: string;
   minecraftVersions: string[];
-  category: 'Gameplay' | 'Admin' | 'Utility' | 'Economy';
+  category: string;
   gallery: {
     url: string;
     hint: string;
   }[];
   overview: string;
   changelog: { version: string; changes: string[] }[];
-  downloadUrl?: string; // Kept for backward compatibility if needed
   versions: {
     gameVersion: string;
     platforms: {
-      name: 'Paper' | 'Spigot' | 'Bukkit' | 'Forge' | 'Fabric';
+      name: 'Paper' | 'Spigot' | 'Bukkit' | 'Forge' | 'Fabric' | 'NeoForge' | 'Quilt';
       downloadUrl: string;
     }[];
   }[];
