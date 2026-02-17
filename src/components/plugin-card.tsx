@@ -21,7 +21,7 @@ type PluginCardProps = {
 
 export function PluginCard({ plugin, className }: PluginCardProps) {
   return (
-    <Card className={cn("flex flex-col overflow-hidden transition-transform duration-300 hover:scale-105 hover:shadow-lg hover:shadow-primary/20", className)}>
+    <Card className={cn("flex flex-col overflow-hidden border border-primary/20 transition-all duration-300 hover:scale-105 hover:border-primary/80 hover:shadow-lg hover:shadow-primary/30", className)}>
       <CardHeader className="flex-row items-start gap-4 p-4">
         <Image
           src={plugin.iconUrl}

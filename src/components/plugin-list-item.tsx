@@ -15,7 +15,7 @@ export function PluginListItem({ plugin }: PluginListItemProps) {
   const allTags = [plugin.category, ...uniquePlatforms].slice(0, 4); 
 
   return (
-    <Card className="flex flex-col md:flex-row gap-4 p-4 transition-colors hover:bg-card/60 border border-border">
+    <Card className="flex flex-col md:flex-row gap-4 p-4 border border-primary/20 transition-all duration-300 hover:scale-[1.01] hover:border-primary/80 hover:shadow-lg hover:shadow-primary/30 hover:bg-card/60">
       <Link href={`/plugins/${plugin.slug}`} className="flex-shrink-0">
         <Image
           src={plugin.iconUrl}
