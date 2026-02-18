@@ -24,15 +24,29 @@ const allPlatforms = [...new Set(allPlugins.flatMap(p => p.versions.flatMap(v =>
 
 
 export default function PluginsPage() {
-  const [plugins, setPlugins] = useState<Plugin[]>(allPlugins);
+  const [plugins, setPlugins] = useState<Plugin[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [sortOption, setSortOption] = useState('downloads');
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([]);
   const [selectedVersions, setSelectedVersions] = useState<string[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
 
+  useEffect(() => {
+    try {
+      const storedPlugins = sessionStorage.getItem('plugins');
+      if (storedPlugins) {
+        setPlugins(JSON.parse(storedPlugins));
+      } else {
+        setPlugins(allPlugins);
+      }
+    } catch (e) {
+      console.error("Could not load plugins from session storage, falling back to mock data.", e);
+      setPlugins(allPlugins);
+    }
+  }, []);
+
   const filteredAndSortedPlugins = useMemo(() => {
-    let filtered = allPlugins.filter(plugin => {
+    let filtered = plugins.filter(plugin => {
       const searchTermMatch =
         plugin.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         plugin.description.toLowerCase().includes(searchTerm.toLowerCase());
@@ -62,7 +76,7 @@ export default function PluginsPage() {
     }
 
     return filtered;
-  }, [searchTerm, sortOption, selectedPlatforms, selectedVersions]);
+  }, [plugins, searchTerm, sortOption, selectedPlatforms, selectedVersions]);
   
   useEffect(() => {
     setCurrentPage(1);

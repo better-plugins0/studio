@@ -1,5 +1,9 @@
-import { getPluginBySlug, plugins } from "@/lib/mock-data";
-import { notFound } from "next/navigation";
+'use client';
+
+import { useEffect, useState } from 'react';
+import { useParams, notFound } from 'next/navigation';
+import { plugins as mockPlugins } from "@/lib/mock-data";
+import type { Plugin } from '@/lib/types';
 import Image from "next/image";
 import {
   Tabs,
@@ -9,48 +13,51 @@ import {
 } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Server, History } from "lucide-react";
-import type { Metadata } from "next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DownloadDialog } from "@/components/download-dialog";
 import { RatingForm } from "@/components/rating-form";
 
-type Props = {
-  params: { slug: string };
-};
+export default function PluginDetailPage() {
+  const params = useParams();
+  const slug = typeof params.slug === 'string' ? params.slug : '';
+  const [plugin, setPlugin] = useState<Plugin | null>(null);
+  const [loading, setLoading] = useState(true);
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const plugin = getPluginBySlug(params.slug);
+  useEffect(() => {
+    if (slug) {
+      let pluginsData: Plugin[];
+      try {
+        const storedPlugins = sessionStorage.getItem('plugins');
+        pluginsData = storedPlugins ? JSON.parse(storedPlugins) : mockPlugins;
+      } catch (e) {
+        pluginsData = mockPlugins;
+        console.error("Failed to parse plugins from session storage.", e);
+      }
+      
+      const foundPlugin = pluginsData.find((p) => p.slug === slug);
+      
+      if (foundPlugin) {
+        setPlugin(foundPlugin);
+        document.title = `${foundPlugin.name} - BetterPlugins Hub`;
+      }
+    }
+    setLoading(false);
+  }, [slug]);
 
-  if (!plugin) {
-    return {
-      title: "Plugin Not Found",
-    };
+  if (loading) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <p>Loading...</p>
+      </div>
+    );
   }
-
-  return {
-    title: `${plugin.name} - BetterPlugins Hub`,
-    description: plugin.description,
-  };
-}
-
-export async function generateStaticParams() {
-  return plugins.map((plugin) => ({
-    slug: plugin.slug,
-  }));
-}
-
-export default function PluginDetailPage({ params }: { params: { slug:string } }) {
-  const plugin = getPluginBySlug(params.slug);
 
   if (!plugin) {
     notFound();
   }
 
-  // Get unique game versions for display
-  const uniqueGameVersions = [...new Set(plugin.versions.map(v => v.gameVersion.split('.')[0] + '.' + v.gameVersion.split('.')[1]))];
-
   return (
-    <div className="container mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+     <div className="container mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
       <header className="mb-12 flex flex-col items-start gap-8 md:flex-row">
         <Image
           src={plugin.iconUrl}
