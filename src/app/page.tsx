@@ -4,7 +4,7 @@ import { PluginCarousel } from "@/components/plugin-carousel";
 
 export default function Home() {
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col animate-in fade-in slide-in-from-bottom-8 duration-1000 fill-mode-forwards">
       <Hero />
       <div className="w-full space-y-24 py-16">
         <PluginCarousel />
