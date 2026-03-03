@@ -103,7 +103,7 @@ export default function PluginsPage() {
 
 
   return (
-    <div className="container mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+    <div className="container mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 animate-in fade-in slide-in-from-bottom-8 duration-1000 fill-mode-forwards">
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-4">
         {/* Sidebar */}
         <div className="lg:col-span-1">

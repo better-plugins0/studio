@@ -31,7 +31,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/Card/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { plugins as mockPlugins } from '@/lib/mock-data';
 import type { Plugin } from '@/lib/types';
@@ -168,7 +168,7 @@ export default function AdminPage() {
   if (!isMounted || !isLoggedIn) return <div className="flex h-screen items-center justify-center">Loading...</div>;
 
   return (
-    <div className="flex min-h-screen bg-background/50">
+    <div className="flex min-h-screen bg-background/50 animate-in fade-in slide-in-from-bottom-8 duration-1000 fill-mode-forwards">
       {/* Sidebar (Visual Only) */}
       <aside className="hidden w-64 border-r bg-card/50 p-6 md:block">
         <div className="flex flex-col h-full">

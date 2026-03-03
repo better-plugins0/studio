@@ -7,7 +7,7 @@ export const metadata: Metadata = {
 
 export default function TeamsPage() {
   return (
-    <div className="container mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
+    <div className="container mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8 animate-in fade-in slide-in-from-bottom-8 duration-1000 fill-mode-forwards">
       <div className="space-y-4 text-center">
         <h1 className="font-headline text-4xl font-bold tracking-tight sm:text-5xl">
           Our Team
