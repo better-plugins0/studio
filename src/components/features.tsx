@@ -23,7 +23,7 @@ export function Features() {
     <section id="features">
       <div className="space-y-4 text-center mb-12">
         <h2 className="font-headline text-3xl font-bold tracking-tight sm:text-4xl">
-          Why BetterPlugins?
+          Why use BetterPlugins?
         </h2>
         <p className="text-lg text-muted-foreground">
           Everything you need for a modern Minecraft server.
