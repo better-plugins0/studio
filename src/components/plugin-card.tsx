@@ -24,7 +24,7 @@ export function PluginCard({ plugin, className }: PluginCardProps) {
     <Card className={cn("flex flex-col overflow-hidden border border-primary/20 transition-all duration-300 hover:scale-105 hover:border-primary/80 hover:shadow-lg hover:shadow-primary/30", className)}>
       <CardHeader className="flex-row items-start gap-4 p-4">
         <Image
-          src={plugin.iconUrl}
+          src={plugin.iconUrl || 'https://picsum.photos/seed/placeholder/64/64'}
           alt={`${plugin.name} icon`}
           width={64}
           height={64}

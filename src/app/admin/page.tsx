@@ -51,6 +51,8 @@ import {
   Search
 } from 'lucide-react';
 
+const DEFAULT_ICON = 'https://picsum.photos/seed/plugin/256/256';
+
 export default function AdminPage() {
   const router = useRouter();
   const { toast } = useToast();
@@ -84,8 +86,8 @@ export default function AdminPage() {
   }, [router]);
 
   const stats = useMemo(() => {
-    const totalDownloads = plugins.reduce((acc, p) => acc + p.downloads, 0);
-    const totalLikes = plugins.reduce((acc, p) => acc + p.likes, 0);
+    const totalDownloads = plugins.reduce((acc, p) => acc + (p.downloads || 0), 0);
+    const totalLikes = plugins.reduce((acc, p) => acc + (p.likes || 0), 0);
     return {
       totalPlugins: plugins.length,
       totalDownloads: (totalDownloads / 1_000_000).toFixed(1) + 'M',
@@ -116,7 +118,7 @@ export default function AdminPage() {
     const category = formData.get('category') as string;
     const description = formData.get('description') as string;
     const longDescription = formData.get('longDescription') as string;
-    const iconUrl = (formData.get('iconUrl') as string) || 'https://picsum.photos/seed/new/256/256';
+    const iconUrl = (formData.get('iconUrl') as string) || DEFAULT_ICON;
 
     const newPlugin: Plugin = {
       id: Math.random().toString(36).substring(2, 9),
@@ -161,7 +163,7 @@ export default function AdminPage() {
         newPlugin.name = formData.get('name') as string;
         newPlugin.description = formData.get('description') as string;
         newPlugin.longDescription = formData.get('longDescription') as string;
-        newPlugin.iconUrl = formData.get('iconUrl') as string;
+        newPlugin.iconUrl = (formData.get('iconUrl') as string) || DEFAULT_ICON;
         newPlugin.category = formData.get('category') as string;
 
         const downloadUrl = formData.get('downloadUrl') as string;
@@ -205,7 +207,6 @@ export default function AdminPage() {
 
   return (
     <div className="flex min-h-screen bg-background/50 animate-in fade-in slide-in-from-bottom-8 duration-1000 fill-mode-forwards">
-      {/* Sidebar */}
       <aside className="hidden w-64 border-r bg-card/50 p-6 md:block">
         <div className="flex flex-col h-full">
           <div className="mb-8 flex items-center gap-2">
@@ -281,7 +282,6 @@ export default function AdminPage() {
             </div>
           </header>
 
-          {/* Stats Section */}
           <div className="grid gap-4 sm:grid-cols-3">
             <Card className="border-primary/10 bg-card/50 backdrop-blur-sm transition-all hover:border-primary/30">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -315,7 +315,6 @@ export default function AdminPage() {
             </Card>
           </div>
 
-          {/* Plugin Management Table */}
           <Card className="border-primary/10 bg-card/50 backdrop-blur-sm">
             <CardHeader className="flex flex-row items-center justify-between">
               <div>
@@ -350,7 +349,7 @@ export default function AdminPage() {
                         <TableCell className="font-medium">
                           <div className="flex items-center gap-3">
                             <div className="h-10 w-10 rounded-md bg-white/5 border border-primary/20 flex items-center justify-center overflow-hidden">
-                              <img src={plugin.iconUrl} alt="" className="h-8 w-8 object-contain" />
+                              <img src={plugin.iconUrl || DEFAULT_ICON} alt="" className="h-8 w-8 object-contain" />
                             </div>
                             <div>
                               <div className="font-bold">{plugin.name}</div>
@@ -361,10 +360,10 @@ export default function AdminPage() {
                         <TableCell>
                           <div className="flex flex-col gap-1 text-xs">
                             <div className="flex items-center gap-1.5">
-                              <Download className="h-3 w-3" /> {(plugin.downloads / 1_000_000).toFixed(1)}M
+                              <Download className="h-3 w-3" /> {((plugin.downloads || 0) / 1_000_000).toFixed(1)}M
                             </div>
                             <div className="flex items-center gap-1.5">
-                              <Heart className="h-3 w-3" /> {(plugin.likes / 1000).toFixed(1)}k
+                              <Heart className="h-3 w-3" /> {((plugin.likes || 0) / 1000).toFixed(1)}k
                             </div>
                           </div>
                         </TableCell>
@@ -413,7 +412,6 @@ export default function AdminPage() {
         </div>
       </main>
 
-      {/* Edit Dialog */}
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent className="sm:max-w-[700px]">
           <DialogHeader>

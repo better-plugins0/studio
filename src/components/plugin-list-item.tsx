@@ -18,7 +18,7 @@ export function PluginListItem({ plugin }: PluginListItemProps) {
     <Card className="flex flex-col md:flex-row gap-4 p-4 border border-primary/20 transition-all duration-300 hover:scale-[1.01] hover:border-primary/80 hover:shadow-lg hover:shadow-primary/30 hover:bg-card/60">
       <Link href={`/plugins/${plugin.slug}`} className="flex-shrink-0">
         <Image
-          src={plugin.iconUrl}
+          src={plugin.iconUrl || 'https://picsum.photos/seed/placeholder/80/80'}
           alt={`${plugin.name} icon`}
           width={80}
           height={80}
@@ -43,11 +43,11 @@ export function PluginListItem({ plugin }: PluginListItemProps) {
       <div className="flex flex-row md:flex-col items-start md:items-end justify-between md:justify-start gap-2 md:gap-1 text-sm text-muted-foreground whitespace-nowrap pt-2 md:pt-0">
         <div className="flex items-center gap-2">
           <Download className="h-4 w-4" />
-          <span>{(plugin.downloads / 1_000_000).toFixed(2)}M</span>
+          <span>{((plugin.downloads || 0) / 1_000_000).toFixed(2)}M</span>
         </div>
         <div className="flex items-center gap-2">
           <Heart className="h-4 w-4" />
-          <span>{(plugin.likes / 1000).toFixed(1)}k</span>
+          <span>{((plugin.likes || 0) / 1000).toFixed(1)}k</span>
         </div>
         <div className="flex items-center gap-2">
           <Clock className="h-4 w-4" />
