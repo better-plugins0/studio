@@ -1,9 +1,14 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/icons/logo";
-import { ArrowRight, MessageSquare } from "lucide-react";
+import { ArrowRight, MessageSquare, Download, Hash } from "lucide-react";
+import { plugins } from "@/lib/mock-data";
 
 export function Hero() {
+  const totalDownloads = plugins.reduce((acc, p) => acc + p.downloads, 0);
+  const formattedDownloads = (totalDownloads / 1_000_000).toFixed(1) + "M+";
+  const totalSeeds = plugins.length;
+
   return (
     <section className="relative overflow-hidden py-24 md:py-32 lg:py-40">
       <div className="container relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -34,6 +39,31 @@ export function Hero() {
                 Join our Discord
               </Link>
             </Button>
+          </div>
+
+          {/* Statistics Bar */}
+          <div className="mt-16 inline-flex flex-wrap items-center justify-center gap-8 rounded-full border border-primary/20 bg-card/30 px-8 py-4 backdrop-blur-md shadow-[0_0_15px_rgba(34,197,94,0.1)] animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-500 fill-mode-both">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary">
+                <Download className="h-5 w-5" />
+              </div>
+              <div className="text-left">
+                <div className="text-xl font-bold leading-none text-foreground">{formattedDownloads}</div>
+                <div className="text-[10px] uppercase tracking-widest text-muted-foreground">Downloads</div>
+              </div>
+            </div>
+            
+            <div className="hidden h-8 w-px bg-primary/20 sm:block"></div>
+            
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary">
+                <Hash className="h-5 w-5" />
+              </div>
+              <div className="text-left">
+                <div className="text-xl font-bold leading-none text-foreground">{totalSeeds}</div>
+                <div className="text-[10px] uppercase tracking-widest text-muted-foreground">Total Seeds</div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
