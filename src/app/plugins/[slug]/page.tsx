@@ -12,26 +12,36 @@ import {
   TabsTrigger,
 } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Server, History } from "lucide-react";
+import { Server, History, Heart, Download } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DownloadDialog } from "@/components/download-dialog";
 import { RatingForm } from "@/components/rating-form";
+import { Button } from "@/components/ui/button";
+import { useToast } from '@/hooks/use-toast';
+import { cn } from '@/lib/utils';
 
 export default function PluginDetailPage() {
   const params = useParams();
+  const { toast } = useToast();
   const slug = typeof params.slug === 'string' ? params.slug : '';
   const [plugin, setPlugin] = useState<Plugin | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isLiked, setIsLiked] = useState(false);
 
   useEffect(() => {
     if (slug) {
       let pluginsData: Plugin[];
       try {
-        const storedPlugins = sessionStorage.getItem('plugins');
+        const storedPlugins = localStorage.getItem('plugins-data');
         pluginsData = storedPlugins ? JSON.parse(storedPlugins) : mockPlugins;
+        
+        // Ensure local storage is initialized if empty
+        if (!storedPlugins) {
+          localStorage.setItem('plugins-data', JSON.stringify(mockPlugins));
+        }
       } catch (e) {
         pluginsData = mockPlugins;
-        console.error("Failed to parse plugins from session storage.", e);
+        console.error("Failed to parse plugins from storage.", e);
       }
       
       const foundPlugin = pluginsData.find((p) => p.slug === slug);
@@ -39,10 +49,52 @@ export default function PluginDetailPage() {
       if (foundPlugin) {
         setPlugin(foundPlugin);
         document.title = `${foundPlugin.name} - BetterPlugins Hub`;
+        
+        // Check if user has liked this plugin (stored in local storage as a list of IDs)
+        const likedPlugins = JSON.parse(localStorage.getItem('user-likes') || '[]');
+        setIsLiked(likedPlugins.includes(foundPlugin.id));
       }
     }
     setLoading(false);
   }, [slug]);
+
+  const handleLike = () => {
+    if (!plugin) return;
+
+    const likedPlugins = JSON.parse(localStorage.getItem('user-likes') || '[]');
+    let newLikesCount = plugin.likes || 0;
+    let newLikedState = !isLiked;
+
+    if (newLikedState) {
+      likedPlugins.push(plugin.id);
+      newLikesCount += 1;
+      toast({
+        title: "Added to favorites",
+        description: `You liked ${plugin.name}!`,
+      });
+    } else {
+      const index = likedPlugins.indexOf(plugin.id);
+      if (index > -1) likedPlugins.splice(index, 1);
+      newLikesCount = Math.max(0, newLikesCount - 1);
+    }
+
+    // Update local state
+    setIsLiked(newLikedState);
+    const updatedPlugin = { ...plugin, likes: newLikesCount };
+    setPlugin(updatedPlugin);
+
+    // Update global plugins data
+    const storedPlugins = JSON.parse(localStorage.getItem('plugins-data') || '[]');
+    const updatedPlugins = storedPlugins.map((p: Plugin) => 
+      p.id === plugin.id ? updatedPlugin : p
+    );
+    
+    localStorage.setItem('plugins-data', JSON.stringify(updatedPlugins));
+    localStorage.setItem('user-likes', JSON.stringify(likedPlugins));
+
+    // Trigger storage event for other components
+    window.dispatchEvent(new Event('storage'));
+  };
 
   if (loading) {
     return (
@@ -59,89 +111,117 @@ export default function PluginDetailPage() {
   return (
      <div className="container mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 animate-in fade-in slide-in-from-bottom-8 duration-1000 fill-mode-forwards">
       <header className="mb-12 flex flex-col items-start gap-8 md:flex-row">
-        <Image
-          src={plugin.iconUrl}
-          alt={`${plugin.name} icon`}
-          width={128}
-          height={128}
-          className="h-32 w-32 shrink-0 rounded-xl border-4 border-card object-cover"
-          data-ai-hint="plugin icon"
-        />
+        <div className="relative group">
+          <Image
+            src={plugin.iconUrl || 'https://picsum.photos/seed/plugin/256/256'}
+            alt={`${plugin.name} icon`}
+            width={128}
+            height={128}
+            className="h-32 w-32 shrink-0 rounded-xl border-4 border-card object-cover shadow-2xl transition-transform duration-500 group-hover:scale-105"
+            data-ai-hint="plugin icon"
+          />
+          <div className="absolute -inset-1 rounded-xl bg-primary/20 opacity-0 blur transition duration-500 group-hover:opacity-100" />
+        </div>
         <div className="flex-1">
-          <h1 className="font-headline text-4xl font-bold tracking-tight sm:text-5xl">{plugin.name}</h1>
-          <p className="mt-2 text-lg text-muted-foreground">by {plugin.author}</p>
-          <p className="mt-4 max-w-2xl text-foreground/80">{plugin.longDescription}</p>
-          <div className="mt-4 flex flex-wrap gap-2">
-            {plugin.minecraftVersions.map((version) => (
-              <Badge key={version} variant="secondary"><Server className="mr-1 h-3 w-3" />{version}</Badge>
-            ))}
-            <Badge variant="outline">{plugin.category}</Badge>
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <h1 className="font-headline text-4xl font-bold tracking-tight sm:text-5xl">{plugin.name}</h1>
+              <p className="mt-2 text-lg text-muted-foreground">by {plugin.author}</p>
+            </div>
+            <div className="flex gap-2">
+              <Button 
+                variant="outline" 
+                size="lg" 
+                className={cn(
+                  "gap-2 transition-all duration-300",
+                  isLiked ? "border-primary/50 bg-primary/10 text-primary" : "hover:border-primary/50"
+                )}
+                onClick={handleLike}
+              >
+                <Heart className={cn("h-5 w-5 transition-transform active:scale-125", isLiked && "fill-primary")} />
+                {plugin.likes?.toLocaleString() || 0}
+              </Button>
+              <DownloadDialog plugin={plugin} />
+            </div>
           </div>
-          <DownloadDialog plugin={plugin} />
+          <p className="mt-6 max-w-2xl text-foreground/80 leading-relaxed">{plugin.longDescription}</p>
+          <div className="mt-6 flex flex-wrap gap-2">
+            {plugin.minecraftVersions.map((version) => (
+              <Badge key={version} variant="secondary" className="px-3 py-1"><Server className="mr-1.5 h-3.5 w-3.5" />{version}</Badge>
+            ))}
+            <Badge variant="outline" className="px-3 py-1 border-primary/20 text-primary">{plugin.category}</Badge>
+          </div>
         </div>
       </header>
 
       <div className="grid grid-cols-1 gap-12 lg:grid-cols-3">
         <div className="lg:col-span-2">
-          <Tabs defaultValue="overview">
-            <TabsList className="grid w-full grid-cols-3">
+          <Tabs defaultValue="overview" className="w-full">
+            <TabsList className="grid w-full grid-cols-3 bg-card/50 border border-border/50">
               <TabsTrigger value="overview">Overview</TabsTrigger>
               <TabsTrigger value="reviews">Ratings</TabsTrigger>
               <TabsTrigger value="changelog">Changelog</TabsTrigger>
             </TabsList>
-            <div className="prose prose-invert mt-6 max-w-none rounded-lg border bg-card p-6">
-              <TabsContent value="overview">
-                 <div dangerouslySetInnerHTML={{ __html: plugin.overview }} />
-                 {plugin.gallery.length > 0 && (
-                   <div className="mt-8">
-                     <h3 className="font-headline text-xl font-bold mb-4">Gallery</h3>
-                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="prose prose-invert mt-6 max-w-none rounded-xl border border-primary/10 bg-card/30 backdrop-blur-sm p-8 shadow-xl">
+              <TabsContent value="overview" className="mt-0">
+                 <div className="leading-relaxed" dangerouslySetInnerHTML={{ __html: plugin.overview }} />
+                 {plugin.gallery && plugin.gallery.length > 0 && (
+                   <div className="mt-12">
+                     <h3 className="font-headline text-2xl font-bold mb-6 text-primary">Gallery</h3>
+                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                        {plugin.gallery.map((img, index) => (
-                         <Image key={index} src={img.url} alt={`Gallery image ${index + 1}`} width={800} height={450} className="rounded-lg object-cover" data-ai-hint={img.hint} />
+                         <div key={index} className="overflow-hidden rounded-xl border border-primary/10 transition-all hover:border-primary/30">
+                           <Image 
+                            src={img.url} 
+                            alt={`Gallery image ${index + 1}`} 
+                            width={800} 
+                            height={450} 
+                            className="aspect-video object-cover transition-transform duration-700 hover:scale-110" 
+                            data-ai-hint={img.hint} 
+                           />
+                         </div>
                        ))}
                      </div>
                    </div>
                  )}
               </TabsContent>
-              <TabsContent value="reviews">
+              <TabsContent value="reviews" className="mt-0">
                 <div>
-                  <h3 className="font-headline text-xl font-bold mb-4">Leave a Review</h3>
+                  <h3 className="font-headline text-2xl font-bold mb-6 text-primary">Community Feedback</h3>
                   <RatingForm />
-                  <div className="my-8 border-b border-border/50"></div>
-                  <h3 className="font-headline text-xl font-bold mb-4">Player Reviews</h3>
-                  <div className="space-y-6">
-                    {/* Placeholder for reviews */}
-                    <div className="border-b border-border/50 pb-4">
-                      <div className="flex items-center gap-2">
-                        <h4 className="font-semibold">Steve</h4>
-                        <span className="text-xs text-muted-foreground">★★★★★</span>
+                  <div className="my-10 border-b border-border/50"></div>
+                  <h3 className="font-headline text-xl font-bold mb-6">Recent Reviews</h3>
+                  <div className="space-y-8">
+                    <div className="border-b border-border/30 pb-6">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold">S</div>
+                          <h4 className="font-semibold text-lg">Steve</h4>
+                        </div>
+                        <span className="text-yellow-400">★★★★★</span>
                       </div>
-                      <p className="mt-2 text-sm text-foreground/80">This plugin is amazing! It completely changed how I play on my server. A must-have!</p>
+                      <p className="mt-4 text-foreground/70 leading-relaxed italic">"This plugin is amazing! It completely changed how I play on my server. A must-have for any modern Paper server."</p>
                     </div>
-                     <div className="border-b border-border/50 pb-4">
-                      <div className="flex items-center gap-2">
-                        <h4 className="font-semibold">Alex</h4>
-                        <span className="text-xs text-muted-foreground">★★★★☆</span>
+                     <div className="border-b border-border/30 pb-6">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold">A</div>
+                          <h4 className="font-semibold text-lg">Alex</h4>
+                        </div>
+                        <span className="text-yellow-400">★★★★☆</span>
                       </div>
-                      <p className="mt-2 text-sm text-foreground/80">Great plugin, works as described. Had a small issue but the developer was very responsive on Discord.</p>
-                    </div>
-                     <div>
-                      <div className="flex items-center gap-2">
-                        <h4 className="font-semibold">Creeper</h4>
-                        <span className="text-xs text-muted-foreground">★★★★★</span>
-                      </div>
-                      <p className="mt-2 text-sm text-foreground/80">Sssssss-uperb!</p>
+                      <p className="mt-4 text-foreground/70 leading-relaxed italic">"Great plugin, works exactly as described. Had a small issue during setup but the developer helped me out on Discord."</p>
                     </div>
                   </div>
                 </div>
               </TabsContent>
-              <TabsContent value="changelog">
-                 <div className="space-y-6">
+              <TabsContent value="changelog" className="mt-0">
+                 <div className="space-y-10">
                    {plugin.changelog.map((entry, i) => (
-                     <div key={i}>
-                       <h4 className="font-headline font-bold text-lg">Version {entry.version}</h4>
-                       <ul className="mt-2 list-disc list-inside space-y-1">
-                         {entry.changes.map((change, j) => <li key={j}>{change}</li>)}
+                     <div key={i} className="relative pl-8 before:absolute before:left-0 before:top-2 before:h-2 before:w-2 before:rounded-full before:bg-primary">
+                       <h4 className="font-headline font-bold text-xl text-primary mb-3">Version {entry.version}</h4>
+                       <ul className="list-disc list-inside space-y-2 text-foreground/80">
+                         {entry.changes.map((change, j) => <li key={j} className="marker:text-primary/50">{change}</li>)}
                        </ul>
                      </div>
                    ))}
@@ -150,40 +230,41 @@ export default function PluginDetailPage() {
             </div>
           </Tabs>
         </div>
-        <aside className="space-y-6">
-           <Card>
+        <aside className="space-y-8">
+           <Card className="border-primary/10 bg-card/30 backdrop-blur-sm shadow-lg">
             <CardHeader>
-              <CardTitle>Plugin Stats</CardTitle>
+              <CardTitle className="text-xl font-bold">Plugin Metrics</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-2 text-sm">
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Downloads</span>
-                <span>{plugin.downloads.toLocaleString()}</span>
+            <CardContent className="space-y-4">
+              <div className="flex justify-between items-center py-2 border-b border-border/30">
+                <span className="text-muted-foreground flex items-center gap-2"><Download className="h-4 w-4" /> Downloads</span>
+                <span className="font-mono font-bold">{plugin.downloads.toLocaleString()}</span>
               </div>
-              <div className="flex justify-between">
+              <div className="flex justify-between items-center py-2 border-b border-border/30">
+                <span className="text-muted-foreground flex items-center gap-2"><Heart className="h-4 w-4" /> Likes</span>
+                <span className="font-mono font-bold">{plugin.likes.toLocaleString()}</span>
+              </div>
+              <div className="flex justify-between items-center py-2">
                 <span className="text-muted-foreground">Category</span>
-                <span>{plugin.category}</span>
-              </div>
-               <div className="flex justify-between">
-                <span className="text-muted-foreground">Author</span>
-                <span>{plugin.author}</span>
+                <Badge variant="outline" className="border-primary/30 text-primary">{plugin.category}</Badge>
               </div>
             </CardContent>
           </Card>
-          <Card>
+          
+          <Card className="border-primary/10 bg-card/30 backdrop-blur-sm shadow-lg">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <History className="h-5 w-5" />
-                Versions
+              <CardTitle className="flex items-center gap-2 text-xl font-bold">
+                <History className="h-5 w-5 text-primary" />
+                Compatibility
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               {plugin.versions.map((version) => (
-                <div key={version.gameVersion} className="flex justify-between items-center text-sm">
-                  <span className="font-medium text-foreground">{version.gameVersion}</span>
+                <div key={version.gameVersion} className="flex justify-between items-center group">
+                  <span className="font-medium text-foreground group-hover:text-primary transition-colors">{version.gameVersion}</span>
                   <div className="flex gap-1.5">
                     {version.platforms.map(platform => (
-                      <Badge key={platform.name} variant="outline" className="text-xs">{platform.name}</Badge>
+                      <Badge key={platform.name} variant="outline" className="text-[10px] uppercase tracking-wider h-5">{platform.name}</Badge>
                     ))}
                   </div>
                 </div>
