@@ -36,6 +36,8 @@ import { Badge } from "@/components/ui/badge";
 import { plugins as mockPlugins } from '@/lib/mock-data';
 import type { Plugin } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
+import { auth } from '@/lib/firebase';
+import { signOut, onAuthStateChanged } from 'firebase/auth';
 import { 
   Plus, 
   Download, 
@@ -57,19 +59,15 @@ export default function AdminPage() {
   const router = useRouter();
   const { toast } = useToast();
   const [plugins, setPlugins] = useState<Plugin[]>([]);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isMounted, setIsMounted] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [editingPlugin, setEditingPlugin] = useState<Plugin | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
-    setIsMounted(true);
-    try {
-      const loggedIn = sessionStorage.getItem('admin-logged-in') === 'true';
-      setIsLoggedIn(loggedIn);
-      if (!loggedIn) {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (!user) {
         router.push('/admin/login');
       } else {
         const storedPlugins = localStorage.getItem('plugins-data');
@@ -79,10 +77,10 @@ export default function AdminPage() {
           setPlugins(mockPlugins);
           localStorage.setItem('plugins-data', JSON.stringify(mockPlugins));
         }
+        setIsLoading(false);
       }
-    } catch (e) {
-      router.push('/admin/login');
-    }
+    });
+    return () => unsubscribe();
   }, [router]);
 
   const stats = useMemo(() => {
@@ -102,13 +100,13 @@ export default function AdminPage() {
     );
   }, [plugins, searchQuery]);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     try {
-      sessionStorage.removeItem('admin-logged-in');
+      await signOut(auth);
+      router.push('/admin/login');
     } catch (e) {
       console.error('Failed to logout');
     }
-    router.push('/admin/login');
   };
 
   const handleAddPluginSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -131,7 +129,7 @@ export default function AdminPage() {
       downloads: 0,
       likes: 0,
       lastUpdated: 'Just now',
-      author: 'admin',
+      author: auth.currentUser?.displayName || 'Admin',
       minecraftVersions: ['1.21.x'],
       gallery: [],
       overview: `<p>${longDescription}</p>`,
@@ -203,7 +201,7 @@ export default function AdminPage() {
     }
   };
 
-  if (!isMounted || !isLoggedIn) return <div className="flex h-screen items-center justify-center">Loading...</div>;
+  if (isLoading) return <div className="flex h-screen items-center justify-center">Loading Secure Session...</div>;
 
   return (
     <div className="flex min-h-screen bg-background/50 animate-in fade-in slide-in-from-bottom-8 duration-1000 fill-mode-forwards">
@@ -212,6 +210,15 @@ export default function AdminPage() {
           <div className="mb-8 flex items-center gap-2">
             <Package className="h-6 w-6 text-primary" />
             <span className="font-headline text-lg font-bold">Admin Panel</span>
+          </div>
+          <div className="mb-6 flex items-center gap-3 px-2 py-3 rounded-lg bg-primary/5 border border-primary/10">
+             <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center text-primary text-xs font-bold">
+               {auth.currentUser?.displayName?.charAt(0) || 'A'}
+             </div>
+             <div className="flex-1 overflow-hidden">
+               <div className="text-xs font-semibold truncate">{auth.currentUser?.displayName || 'Admin'}</div>
+               <div className="text-[10px] text-muted-foreground truncate">{auth.currentUser?.email}</div>
+             </div>
           </div>
           <nav className="flex-1 space-y-2">
             <Button variant="secondary" className="w-full justify-start gap-2">
@@ -235,7 +242,7 @@ export default function AdminPage() {
           <header className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h1 className="font-headline text-3xl font-bold tracking-tight">Management Console</h1>
-              <p className="text-muted-foreground">Welcome back, administrator.</p>
+              <p className="text-muted-foreground">Welcome back, {auth.currentUser?.displayName?.split(' ')[0] || 'Administrator'}.</p>
             </div>
             <div className="flex gap-2">
               <Button onClick={handleLogout} variant="outline" className="md:hidden">Logout</Button>
