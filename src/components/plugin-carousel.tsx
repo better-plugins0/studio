@@ -1,11 +1,26 @@
 'use client';
 
-import { plugins } from "@/lib/mock-data";
+import { useState, useEffect } from 'react';
+import { plugins as mockPlugins } from "@/lib/mock-data";
+import type { Plugin } from "@/lib/types";
 import { PluginCard } from "@/components/plugin-card";
 import { cn } from "@/lib/utils";
 
 export function PluginCarousel() {
+  const [plugins, setPlugins] = useState<Plugin[]>([]);
+
+  useEffect(() => {
+    const stored = localStorage.getItem('plugins-data');
+    if (stored) {
+      setPlugins(JSON.parse(stored));
+    } else {
+      setPlugins(mockPlugins);
+    }
+  }, []);
+
   const allPlugins = [...plugins, ...plugins]; // Duplicate for seamless loop
+
+  if (plugins.length === 0) return null;
 
   return (
     <section id="plugins">
@@ -26,7 +41,7 @@ export function PluginCarousel() {
             <PluginCard
               key={`${plugin.id}-${index}`}
               plugin={plugin}
-              className="w-80 flex-shrink-0" // Fixed width for consistent sizing
+              className="w-80 flex-shrink-0" 
             />
           ))}
         </div>

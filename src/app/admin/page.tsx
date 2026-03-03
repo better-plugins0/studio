@@ -58,6 +58,7 @@ export default function AdminPage() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [editingPlugin, setEditingPlugin] = useState<Plugin | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -69,11 +70,12 @@ export default function AdminPage() {
       if (!loggedIn) {
         router.push('/admin/login');
       } else {
-        const storedPlugins = sessionStorage.getItem('plugins');
+        const storedPlugins = localStorage.getItem('plugins-data');
         if (storedPlugins) {
           setPlugins(JSON.parse(storedPlugins));
         } else {
           setPlugins(mockPlugins);
+          localStorage.setItem('plugins-data', JSON.stringify(mockPlugins));
         }
       }
     } catch (e) {
@@ -107,6 +109,47 @@ export default function AdminPage() {
     router.push('/admin/login');
   };
 
+  const handleAddPluginSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const name = formData.get('name') as string;
+    const category = formData.get('category') as string;
+    const description = formData.get('description') as string;
+    const longDescription = formData.get('longDescription') as string;
+    const iconUrl = (formData.get('iconUrl') as string) || 'https://picsum.photos/seed/new/256/256';
+
+    const newPlugin: Plugin = {
+      id: Math.random().toString(36).substring(2, 9),
+      name,
+      slug: name.toLowerCase().replace(/\s+/g, '-'),
+      description,
+      longDescription,
+      iconUrl,
+      category,
+      downloads: 0,
+      likes: 0,
+      lastUpdated: 'Just now',
+      author: 'admin',
+      minecraftVersions: ['1.21.x'],
+      gallery: [],
+      overview: `<p>${longDescription}</p>`,
+      changelog: [{ version: '1.0.0', changes: ['Initial release'] }],
+      versions: [
+        { gameVersion: "1.21", platforms: [{ name: "Paper", downloadUrl: "#" }] }
+      ]
+    };
+
+    const updatedPlugins = [newPlugin, ...plugins];
+    setPlugins(updatedPlugins);
+    localStorage.setItem('plugins-data', JSON.stringify(updatedPlugins));
+    
+    toast({
+      title: "Plugin Created",
+      description: `"${name}" has been added to the hub.`,
+    });
+    setIsAddDialogOpen(false);
+  };
+
   const handleEditPluginSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!editingPlugin) return;
@@ -114,7 +157,7 @@ export default function AdminPage() {
     const formData = new FormData(e.currentTarget);
     const updatedPlugins = plugins.map(p => {
       if (p.id === editingPlugin.id) {
-        const newPlugin = JSON.parse(JSON.stringify(p));
+        const newPlugin = { ...p };
         newPlugin.name = formData.get('name') as string;
         newPlugin.description = formData.get('description') as string;
         newPlugin.longDescription = formData.get('longDescription') as string;
@@ -131,19 +174,12 @@ export default function AdminPage() {
     });
 
     setPlugins(updatedPlugins);
-    try {
-      sessionStorage.setItem('plugins', JSON.stringify(updatedPlugins));
-      toast({
-        title: "Plugin Updated",
-        description: `"${formData.get('name')}" has been updated successfully.`,
-      });
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Error Saving",
-        description: "Could not save plugin changes.",
-      });
-    }
+    localStorage.setItem('plugins-data', JSON.stringify(updatedPlugins));
+    
+    toast({
+      title: "Plugin Updated",
+      description: `"${formData.get('name')}" has been updated successfully.`,
+    });
     setIsEditDialogOpen(false);
     setEditingPlugin(null);
   };
@@ -157,7 +193,7 @@ export default function AdminPage() {
     if (confirm('Are you sure you want to delete this plugin? This action cannot be undone.')) {
       const updatedPlugins = plugins.filter(p => p.id !== id);
       setPlugins(updatedPlugins);
-      sessionStorage.setItem('plugins', JSON.stringify(updatedPlugins));
+      localStorage.setItem('plugins-data', JSON.stringify(updatedPlugins));
       toast({
         title: "Plugin Deleted",
         description: "The plugin has been removed from the directory.",
@@ -169,7 +205,7 @@ export default function AdminPage() {
 
   return (
     <div className="flex min-h-screen bg-background/50 animate-in fade-in slide-in-from-bottom-8 duration-1000 fill-mode-forwards">
-      {/* Sidebar (Visual Only) */}
+      {/* Sidebar */}
       <aside className="hidden w-64 border-r bg-card/50 p-6 md:block">
         <div className="flex flex-col h-full">
           <div className="mb-8 flex items-center gap-2">
@@ -202,7 +238,7 @@ export default function AdminPage() {
             </div>
             <div className="flex gap-2">
               <Button onClick={handleLogout} variant="outline" className="md:hidden">Logout</Button>
-              <Dialog>
+              <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
                 <DialogTrigger asChild>
                   <Button className="gap-2 shadow-lg shadow-primary/20">
                     <Plus className="h-4 w-4" /> Add New Plugin
@@ -213,24 +249,28 @@ export default function AdminPage() {
                     <DialogTitle>Register New Plugin</DialogTitle>
                     <DialogDescription>Fill out the form below to add a new plugin to the repository.</DialogDescription>
                   </DialogHeader>
-                  <form onSubmit={(e) => { e.preventDefault(); alert('Feature coming soon with Firestore integration!'); }} className="grid gap-6 py-4">
+                  <form onSubmit={handleAddPluginSubmit} className="grid gap-6 py-4">
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <Label htmlFor="new-name">Name</Label>
-                        <Input id="new-name" placeholder="BetterEconomy" />
+                        <Input id="new-name" name="name" placeholder="BetterEconomy" required />
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="new-category">Category</Label>
-                        <Input id="new-category" placeholder="Economy" />
+                        <Input id="new-category" name="category" placeholder="Economy" required />
                       </div>
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="new-description">Short Description</Label>
-                      <Input id="new-description" placeholder="A simple economy plugin..." />
+                      <Input id="new-description" name="description" placeholder="A simple economy plugin..." required />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="new-icon">Icon URL (optional)</Label>
+                      <Input id="new-icon" name="iconUrl" placeholder="https://..." />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="new-long">Long Overview</Label>
-                      <Textarea id="new-long" className="min-h-[100px]" placeholder="Detailed description for the overview tab..." />
+                      <Textarea id="new-long" name="longDescription" className="min-h-[100px]" placeholder="Detailed description..." required />
                     </div>
                     <DialogFooter>
                       <Button type="submit">Create Plugin Entry</Button>
@@ -260,7 +300,7 @@ export default function AdminPage() {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{stats.totalPlugins}</div>
-                <p className="text-xs text-muted-foreground">Across 3 platforms</p>
+                <p className="text-xs text-muted-foreground">Across platforms</p>
               </CardContent>
             </Card>
             <Card className="border-primary/10 bg-card/50 backdrop-blur-sm transition-all hover:border-primary/30">
@@ -270,7 +310,7 @@ export default function AdminPage() {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{stats.totalLikes}</div>
-                <p className="text-xs text-muted-foreground">98% positive feedback</p>
+                <p className="text-xs text-muted-foreground">User satisfaction</p>
               </CardContent>
             </Card>
           </div>
@@ -309,7 +349,7 @@ export default function AdminPage() {
                       <TableRow key={plugin.id} className="hover:bg-primary/5 transition-colors">
                         <TableCell className="font-medium">
                           <div className="flex items-center gap-3">
-                            <div className="h-10 w-10 rounded-md bg-white/5 border border-primary/20 flex items-center justify-center">
+                            <div className="h-10 w-10 rounded-md bg-white/5 border border-primary/20 flex items-center justify-center overflow-hidden">
                               <img src={plugin.iconUrl} alt="" className="h-8 w-8 object-contain" />
                             </div>
                             <div>
@@ -381,26 +421,27 @@ export default function AdminPage() {
               <Edit3 className="h-5 w-5 text-primary" />
               Editing: {editingPlugin?.name}
             </DialogTitle>
+            <DialogDescription>Update the metadata and links for this plugin.</DialogDescription>
           </DialogHeader>
           {editingPlugin && (
             <form onSubmit={handleEditPluginSubmit} className="space-y-6 py-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="edit-name">Display Name</Label>
-                  <Input id="edit-name" name="name" defaultValue={editingPlugin.name} />
+                  <Input id="edit-name" name="name" defaultValue={editingPlugin.name} required />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="edit-category">Category</Label>
-                  <Input id="edit-category" name="category" defaultValue={editingPlugin.category} />
+                  <Input id="edit-category" name="category" defaultValue={editingPlugin.category} required />
                 </div>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="edit-description">Marketplace Description</Label>
-                <Input id="edit-description" name="description" defaultValue={editingPlugin.description} />
+                <Input id="edit-description" name="description" defaultValue={editingPlugin.description} required />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="edit-long">Overview (HTML Supported)</Label>
-                <Textarea id="edit-long" name="longDescription" defaultValue={editingPlugin.longDescription} className="min-h-[150px]" />
+                <Textarea id="edit-long" name="longDescription" defaultValue={editingPlugin.longDescription} className="min-h-[150px]" required />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">

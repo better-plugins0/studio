@@ -1,13 +1,26 @@
+'use client';
+
+import { useState, useEffect } from 'react';
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/icons/logo";
 import { ArrowRight, MessageSquare, Download, Hash } from "lucide-react";
-import { plugins } from "@/lib/mock-data";
+import { plugins as mockPlugins } from "@/lib/mock-data";
 
 export function Hero() {
-  const totalDownloads = plugins.reduce((acc, p) => acc + p.downloads, 0);
+  const [totalDownloads, setTotalDownloads] = useState(0);
+  const [totalPlugins, setTotalPlugins] = useState(0);
+
+  useEffect(() => {
+    const stored = localStorage.getItem('plugins-data');
+    const data = stored ? JSON.parse(stored) : mockPlugins;
+    
+    const downloads = data.reduce((acc: number, p: any) => acc + (p.downloads || 0), 0);
+    setTotalDownloads(downloads);
+    setTotalPlugins(data.length);
+  }, []);
+
   const formattedDownloads = (totalDownloads / 1_000_000).toFixed(1) + "M+";
-  const totalSeeds = plugins.length;
 
   return (
     <section className="relative overflow-hidden py-24 md:py-32 lg:py-40">
@@ -60,7 +73,7 @@ export function Hero() {
                 <Hash className="h-5 w-5" />
               </div>
               <div className="text-left">
-                <div className="text-xl font-bold leading-none text-foreground">{totalSeeds}</div>
+                <div className="text-xl font-bold leading-none text-foreground">{totalPlugins}</div>
                 <div className="text-[10px] uppercase tracking-widest text-muted-foreground">Total Seeds</div>
               </div>
             </div>
