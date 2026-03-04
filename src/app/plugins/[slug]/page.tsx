@@ -83,6 +83,7 @@ export default function PluginDetailPage() {
     const updatedPlugin = { ...plugin, likes: newLikesCount };
     setPlugin(updatedPlugin);
 
+    // Update global store
     const storedPlugins = JSON.parse(localStorage.getItem('plugins-data') || '[]');
     const updatedPlugins = storedPlugins.map((p: Plugin) => 
       p.id === plugin.id ? updatedPlugin : p
@@ -90,7 +91,10 @@ export default function PluginDetailPage() {
     
     localStorage.setItem('plugins-data', JSON.stringify(updatedPlugins));
     localStorage.setItem('user-likes', JSON.stringify(likedPlugins));
+    
+    // Notify other components
     window.dispatchEvent(new Event('storage'));
+    window.dispatchEvent(new Event('pluginsUpdated'));
   };
 
   if (loading) {

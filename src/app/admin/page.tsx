@@ -66,22 +66,30 @@ export default function AdminPage() {
   const [editingPlugin, setEditingPlugin] = useState<Plugin | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
 
-  useEffect(() => {
-    const loadData = () => {
-      const storedPlugins = localStorage.getItem('plugins-data');
-      if (storedPlugins) {
-        setPlugins(JSON.parse(storedPlugins));
-      } else {
-        setPlugins(mockPlugins);
-        localStorage.setItem('plugins-data', JSON.stringify(mockPlugins));
-      }
-    };
+  const loadData = () => {
+    const storedPlugins = localStorage.getItem('plugins-data');
+    if (storedPlugins) {
+      setPlugins(JSON.parse(storedPlugins));
+    } else {
+      setPlugins(mockPlugins);
+      localStorage.setItem('plugins-data', JSON.stringify(mockPlugins));
+    }
+  };
 
+  useEffect(() => {
     loadData();
+
+    // Listen for changes from other tabs or same-tab like button
+    const handleUpdate = () => loadData();
+    window.addEventListener('storage', handleUpdate);
+    window.addEventListener('pluginsUpdated', handleUpdate);
 
     if (!auth) {
       setIsLoading(false);
-      return;
+      return () => {
+        window.removeEventListener('storage', handleUpdate);
+        window.removeEventListener('pluginsUpdated', handleUpdate);
+      };
     }
 
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -93,7 +101,11 @@ export default function AdminPage() {
       }
     });
 
-    return () => unsubscribe();
+    return () => {
+      unsubscribe();
+      window.removeEventListener('storage', handleUpdate);
+      window.removeEventListener('pluginsUpdated', handleUpdate);
+    };
   }, [router]);
 
   const stats = useMemo(() => {
@@ -314,7 +326,7 @@ export default function AdminPage() {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{stats.totalDownloads}</div>
-                <p className="text-xs text-muted-foreground">+12.5% from last month</p>
+                <p className="text-xs text-muted-foreground">Across all plugins</p>
               </CardContent>
             </Card>
             <Card className="border-primary/10 bg-card/50 backdrop-blur-sm transition-all hover:border-primary/30">
@@ -334,7 +346,7 @@ export default function AdminPage() {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{stats.totalLikes}</div>
-                <p className="text-xs text-muted-foreground">User satisfaction</p>
+                <p className="text-xs text-muted-foreground">Real-time engagement</p>
               </CardContent>
             </Card>
           </div>
