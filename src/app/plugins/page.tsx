@@ -24,6 +24,7 @@ export default function PluginsPage() {
   const [sortOption, setSortOption] = useState('downloads');
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([]);
   const [selectedVersions, setSelectedVersions] = useState<string[]>([]);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
 
   const loadPlugins = () => {
@@ -39,10 +40,8 @@ export default function PluginsPage() {
   useEffect(() => {
     loadPlugins();
 
-    // Listen for storage changes from the admin panel
     const handleStorageChange = () => loadPlugins();
     window.addEventListener('storage', handleStorageChange);
-    // Custom event for same-window updates
     window.addEventListener('pluginsUpdated', handleStorageChange);
     
     return () => {
@@ -59,6 +58,10 @@ export default function PluginsPage() {
     return [...new Set(plugins.flatMap(p => p.versions?.flatMap(v => v.platforms.map(plat => plat.name)) || []))];
   }, [plugins]);
 
+  const allCategories = useMemo(() => {
+    return [...new Set(plugins.map(p => p.category))].sort();
+  }, [plugins]);
+
   const filteredAndSortedPlugins = useMemo(() => {
     let filtered = plugins.filter(plugin => {
       const searchTermMatch =
@@ -73,7 +76,11 @@ export default function PluginsPage() {
         selectedVersions.length === 0 ||
         plugin.minecraftVersions?.some(v => selectedVersions.includes(v));
 
-      return searchTermMatch && platformMatch && versionMatch;
+      const categoryMatch =
+        selectedCategories.length === 0 ||
+        selectedCategories.includes(plugin.category);
+
+      return searchTermMatch && platformMatch && versionMatch && categoryMatch;
     });
 
     switch (sortOption) {
@@ -88,11 +95,11 @@ export default function PluginsPage() {
     }
 
     return filtered;
-  }, [plugins, searchTerm, sortOption, selectedPlatforms, selectedVersions]);
+  }, [plugins, searchTerm, sortOption, selectedPlatforms, selectedVersions, selectedCategories]);
   
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchTerm, sortOption, selectedPlatforms, selectedVersions]);
+  }, [searchTerm, sortOption, selectedPlatforms, selectedVersions, selectedCategories]);
 
   const totalPages = Math.ceil(filteredAndSortedPlugins.length / ITEMS_PER_PAGE);
   const paginatedPlugins = filteredAndSortedPlugins.slice(
@@ -112,6 +119,12 @@ export default function PluginsPage() {
     );
   };
 
+  const handleCategoryChange = (category: string) => {
+    setSelectedCategories(prev =>
+      prev.includes(category) ? prev.filter(c => c !== category) : [...prev, category]
+    );
+  };
+
   return (
     <div className="container mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 animate-in fade-in slide-in-from-bottom-8 duration-1000 fill-mode-forwards">
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-4">
@@ -123,6 +136,9 @@ export default function PluginsPage() {
             availableVersions={allGameVersions}
             selectedVersions={selectedVersions}
             onVersionChange={handleVersionChange}
+            availableCategories={allCategories}
+            selectedCategories={selectedCategories}
+            onCategoryChange={handleCategoryChange}
           />
         </div>
 
@@ -132,14 +148,14 @@ export default function PluginsPage() {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
                 placeholder="Search plugins..."
-                className="pl-9 h-11 text-base"
+                className="pl-9 h-11 text-base bg-card/50 border-primary/20 focus:border-primary/50 transition-all"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
             <div className="flex gap-2">
               <Select value={sortOption} onValueChange={setSortOption}>
-                <SelectTrigger className="w-full md:w-[180px]">
+                <SelectTrigger className="w-full md:w-[180px] bg-card/50 border-primary/20">
                   <SelectValue placeholder="Sort by" />
                 </SelectTrigger>
                 <SelectContent>
@@ -157,20 +173,27 @@ export default function PluginsPage() {
                 <PluginListItem key={plugin.id} plugin={plugin} />
               ))
             ) : (
-               <div className="text-center py-12">
-                <p className="text-muted-foreground">No plugins found.</p>
+               <div className="text-center py-20 rounded-xl border border-dashed border-primary/20 bg-card/20">
+                <p className="text-muted-foreground">No plugins found matching your criteria.</p>
+                <Button variant="link" className="mt-2" onClick={() => {
+                  setSearchTerm('');
+                  setSelectedPlatforms([]);
+                  setSelectedVersions([]);
+                  setSelectedCategories([]);
+                }}>Reset all filters</Button>
               </div>
             )}
           </div>
 
           {totalPages > 1 && (
-            <div className="flex justify-end items-center gap-2">
+            <div className="flex justify-end items-center gap-2 mt-8">
               {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
                 <Button
                   key={page}
                   variant={currentPage === page ? "default" : "outline"}
                   size="sm"
                   onClick={() => setCurrentPage(page)}
+                  className={currentPage === page ? "" : "bg-card/50 border-primary/20 hover:border-primary/50"}
                 >
                   {page}
                 </Button>
