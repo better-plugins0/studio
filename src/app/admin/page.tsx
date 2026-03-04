@@ -115,6 +115,8 @@ export default function AdminPage() {
     setPlugins(updatedPlugins);
     localStorage.setItem('plugins-data', JSON.stringify(updatedPlugins));
     window.dispatchEvent(new Event('pluginsUpdated'));
+    // Trigger storage event for same-window listeners
+    window.dispatchEvent(new Event('storage'));
   };
 
   const handleLogout = async () => {
@@ -260,7 +262,9 @@ export default function AdminPage() {
             </div>
             <div className="flex gap-2">
               <Button onClick={handleLogout} variant="outline" className="md:hidden">Logout</Button>
-              <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+              <Dialog open={isAddDialogOpen} onOpenChange={setOpen => {
+                setIsAddDialogOpen(setOpen);
+              }}>
                 <DialogTrigger asChild>
                   <Button className="gap-2 shadow-lg shadow-primary/20">
                     <Plus className="h-4 w-4" /> Add New Plugin
