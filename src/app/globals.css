@@ -23,6 +23,7 @@
     --border: 217 33% 17%;
     --input: 217 33% 17%;
     --ring: 142 71% 45%;
+    --radius: 0.5rem;
   }
 
   .dark {
@@ -54,15 +55,40 @@
   }
   body {
     @apply bg-background text-foreground;
-    background-image: 
-      radial-gradient(ellipse 80% 50% at 50% -20%, hsl(var(--primary) / 0.1), transparent),
-      radial-gradient(ellipse 50% 40% at 20% 40%, hsl(var(--primary) / 0.09), transparent),
-      radial-gradient(ellipse 40% 30% at 80% 90%, hsl(var(--primary) / 0.08), transparent),
-      radial-gradient(circle 50% 50% at 50% 50%, hsl(var(--secondary) / 0.05), transparent),
-      radial-gradient(ellipse 60% 50% at -10% 10%, hsl(var(--secondary) / 0.08), transparent),
-      radial-gradient(ellipse 80% 50% at 110% 40%, hsl(var(--primary) / 0.07), transparent);
-    background-attachment: fixed;
-    animation: background-move 30s ease-in-out infinite alternate;
+    position: relative;
+    min-height: 100vh;
+  }
+  
+  /* Glowing Background Layer */
+  body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    background: 
+      radial-gradient(circle at 20% 30%, hsl(var(--primary) / 0.15), transparent 40%),
+      radial-gradient(circle at 80% 70%, hsl(var(--primary) / 0.12), transparent 40%),
+      radial-gradient(circle at 50% 50%, hsl(var(--secondary) / 0.08), transparent 60%),
+      radial-gradient(circle at 90% 10%, hsl(var(--primary) / 0.05), transparent 30%);
+    filter: blur(60px);
+    animation: background-glow 15s ease-in-out infinite alternate;
+    pointer-events: none;
+  }
+
+  /* Secondary Glow Layer for Depth */
+  body::after {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -2;
+    background: hsl(var(--background));
+    pointer-events: none;
   }
 }
 
@@ -81,12 +107,22 @@
     animation: scroll 20s linear infinite;
   }
 
-  @keyframes background-move {
-    from {
-      background-position: 50% -20%, 20% 40%, 80% 90%, 50% 50%, -10% 10%, 110% 40%;
+  @keyframes background-glow {
+    0% {
+      transform: scale(1) translate(0, 0);
+      opacity: 0.7;
     }
-    to {
-      background-position: 40% 0%, 30% 50%, 85% 80%, 60% 60%, 0% 0%, 100% 30%;
+    33% {
+      transform: scale(1.05) translate(2%, -1%);
+      opacity: 1;
+    }
+    66% {
+      transform: scale(0.95) translate(-1%, 2%);
+      opacity: 0.8;
+    }
+    100% {
+      transform: scale(1.1) translate(1%, 1%);
+      opacity: 0.9;
     }
   }
 }
