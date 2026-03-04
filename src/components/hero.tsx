@@ -21,7 +21,7 @@ export function Hero() {
             BETTER <span className="text-primary animate-pulse">PLUGINS HUB</span>
           </h1>
           <p className="mt-6 text-lg leading-8 text-muted-foreground text-balance">
-            Download Best Minecraft Plugins
+            Discover, download, and enhance your Minecraft server with the best high-quality plugins for Paper, Spigot, and Bukkit. Built for performance, stability, and modern gameplay.
           </p>
           <div className="mt-10 flex items-center justify-center gap-x-6">
             <Button asChild size="lg" className="hover:scale-105">
