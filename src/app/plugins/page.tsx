@@ -6,7 +6,7 @@ import { plugins as mockPlugins } from '@/lib/mock-data';
 import { PluginFilters } from '@/components/plugin-filters';
 import { PluginListItem } from '@/components/plugin-list-item';
 import { Input } from '@/components/ui/input';
-import { Search } from 'lucide-react';
+import { Search, SlidersHorizontal, PackageSearch } from 'lucide-react';
 import {
   Select,
   SelectContent,
@@ -90,6 +90,9 @@ export default function PluginsPage() {
       case 'name':
         filtered.sort((a, b) => a.name.localeCompare(b.name));
         break;
+      case 'likes':
+        filtered.sort((a, b) => (b.likes || 0) - (a.likes || 0));
+        break;
       default:
         break;
     }
@@ -126,8 +129,13 @@ export default function PluginsPage() {
   };
 
   return (
-    <div className="container mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 animate-in fade-in slide-in-from-bottom-8 duration-1000 fill-mode-forwards">
-      <div className="grid grid-cols-1 gap-8 lg:grid-cols-4">
+    <div className="container mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 animate-in fade-in duration-1000">
+      <header className="mb-12 space-y-4">
+        <h1 className="font-headline text-4xl font-bold tracking-tight sm:text-5xl text-white">Plugin Directory</h1>
+        <p className="text-xl text-muted-foreground max-w-2xl">Browse our curated collection of high-performance Minecraft plugins. Use the filters to find exactly what your server needs.</p>
+      </header>
+
+      <div className="grid grid-cols-1 gap-12 lg:grid-cols-4">
         <div className="lg:col-span-1">
           <PluginFilters 
             availablePlatforms={allPlatforms}
@@ -142,58 +150,70 @@ export default function PluginsPage() {
           />
         </div>
 
-        <div className="lg:col-span-3 space-y-6">
-          <div className="flex flex-col md:flex-row gap-4 justify-between">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <div className="lg:col-span-3 space-y-8">
+          <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-card/30 p-4 rounded-xl border border-primary/10 backdrop-blur-sm">
+            <div className="relative flex-1 w-full">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-primary/50" />
               <Input
-                placeholder="Search plugins..."
-                className="pl-9 h-11 text-base bg-card/50 border-primary/20 focus:border-primary/50 transition-all"
+                placeholder="Search by name or keyword..."
+                className="pl-12 h-14 text-lg bg-background/50 border-primary/10 focus:border-primary/50 focus:ring-primary/20 transition-all rounded-lg"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-4 w-full md:w-auto">
+              <div className="flex items-center gap-2 text-sm font-bold text-muted-foreground shrink-0">
+                <SlidersHorizontal className="h-4 w-4" /> Sort By
+              </div>
               <Select value={sortOption} onValueChange={setSortOption}>
-                <SelectTrigger className="w-full md:w-[180px] bg-card/50 border-primary/20">
+                <SelectTrigger className="w-full md:w-[180px] h-14 bg-background/50 border-primary/10 font-bold">
                   <SelectValue placeholder="Sort by" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="relevance">Relevance</SelectItem>
-                  <SelectItem value="downloads">Downloads</SelectItem>
-                  <SelectItem value="name">Name</SelectItem>
+                  <SelectItem value="downloads">Most Downloaded</SelectItem>
+                  <SelectItem value="likes">Most Liked</SelectItem>
+                  <SelectItem value="name">Alphabetical</SelectItem>
                 </SelectContent>
               </Select>
             </div>
           </div>
 
-          <div className="space-y-4">
+          <div className="space-y-6">
             {paginatedPlugins.length > 0 ? (
               paginatedPlugins.map((plugin) => (
                 <PluginListItem key={plugin.id} plugin={plugin} />
               ))
             ) : (
-               <div className="text-center py-20 rounded-xl border border-dashed border-primary/20 bg-card/20">
-                <p className="text-muted-foreground">No plugins found matching your criteria.</p>
-                <Button variant="link" className="mt-2" onClick={() => {
+               <div className="text-center py-32 rounded-3xl border-2 border-dashed border-primary/10 bg-card/20 backdrop-blur-sm">
+                <PackageSearch className="h-16 w-16 text-primary/20 mx-auto mb-6" />
+                <h3 className="text-2xl font-bold text-white mb-2">No plugins found</h3>
+                <p className="text-muted-foreground mb-8">Try adjusting your filters or search term to broaden your results.</p>
+                <Button variant="outline" className="h-12 px-8 border-primary/30 hover:bg-primary/10 font-bold" onClick={() => {
                   setSearchTerm('');
                   setSelectedPlatforms([]);
                   setSelectedVersions([]);
                   setSelectedCategories([]);
-                }}>Reset all filters</Button>
+                }}>Reset All Filters</Button>
               </div>
             )}
           </div>
 
           {totalPages > 1 && (
-            <div className="flex justify-end items-center gap-2 mt-8">
+            <div className="flex justify-center items-center gap-3 mt-12">
               {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
                 <Button
                   key={page}
                   variant={currentPage === page ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setCurrentPage(page)}
-                  className={currentPage === page ? "" : "bg-card/50 border-primary/20 hover:border-primary/50"}
+                  className={cn(
+                    "h-12 w-12 font-bold rounded-xl transition-all",
+                    currentPage === page 
+                      ? "shadow-lg shadow-primary/20" 
+                      : "bg-card/40 border-primary/10 hover:border-primary/50"
+                  )}
+                  onClick={() => {
+                    setCurrentPage(page);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
                 >
                   {page}
                 </Button>

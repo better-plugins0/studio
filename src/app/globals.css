@@ -25,28 +25,6 @@
     --ring: 142 71% 45%;
     --radius: 0.5rem;
   }
-
-  .dark {
-    --background: 222 84% 4%;
-    --foreground: 210 40% 98%;
-    --card: 222 84% 6%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222 84% 4%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 142 71% 45%;
-    --primary-foreground: 142 71% 95%;
-    --secondary: 217 33% 17%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217 33% 17%;
-    --muted-foreground: 215 20% 65%;
-    --accent: 217 33% 17%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 63% 31%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217 33% 17%;
-    --input: 217 33% 17%;
-    --ring: 142 71% 45%;
-  }
 }
 
 @layer base {
@@ -57,9 +35,10 @@
     @apply bg-background text-foreground;
     position: relative;
     min-height: 100vh;
+    overflow-x: hidden;
   }
   
-  /* Glowing Background Layer 1 */
+  /* Global Glowing Background */
   body::before {
     content: "";
     position: fixed;
@@ -69,15 +48,14 @@
     height: 100%;
     z-index: -1;
     background: 
-      radial-gradient(circle at 20% 30%, hsl(var(--primary) / 0.18), transparent 45%),
-      radial-gradient(circle at 80% 70%, hsl(var(--primary) / 0.15), transparent 45%),
-      radial-gradient(circle at 50% 50%, hsl(var(--secondary) / 0.1), transparent 60%);
+      radial-gradient(circle at 20% 30%, hsl(var(--primary) / 0.15), transparent 40%),
+      radial-gradient(circle at 80% 70%, hsl(var(--primary) / 0.12), transparent 40%),
+      radial-gradient(circle at 50% 50%, hsl(var(--secondary) / 0.05), transparent 60%);
     filter: blur(80px);
-    animation: background-glow-primary 20s ease-in-out infinite alternate;
+    animation: background-glow-pulse 15s ease-in-out infinite alternate;
     pointer-events: none;
   }
 
-  /* Glowing Background Layer 2 (Secondary pulses) */
   body::after {
     content: "";
     position: fixed;
@@ -88,19 +66,29 @@
     z-index: -2;
     background: 
       hsl(var(--background)),
-      radial-gradient(circle at 90% 10%, hsl(var(--primary) / 0.08), transparent 35%),
-      radial-gradient(circle at 10% 90%, hsl(var(--primary) / 0.08), transparent 35%);
+      radial-gradient(circle at 90% 10%, hsl(var(--primary) / 0.05), transparent 30%),
+      radial-gradient(circle at 10% 90%, hsl(var(--primary) / 0.05), transparent 30%);
     filter: blur(40px);
-    animation: background-glow-secondary 15s ease-in-out infinite alternate-reverse;
     pointer-events: none;
   }
 }
 
 @layer utilities {
-  .text-balance {
-    text-wrap: balance;
+  @keyframes background-glow-pulse {
+    0% {
+      transform: scale(1) translate(0, 0);
+      opacity: 0.5;
+    }
+    50% {
+      transform: scale(1.1) translate(2%, -2%);
+      opacity: 0.8;
+    }
+    100% {
+      transform: scale(0.95) translate(-2%, 2%);
+      opacity: 0.6;
+    }
   }
-  
+
   @keyframes scroll {
     to {
       transform: translate(calc(-50% - 0.5rem));
@@ -108,32 +96,6 @@
   }
 
   .scrolling-animation {
-    animation: scroll 20s linear infinite;
-  }
-
-  @keyframes background-glow-primary {
-    0% {
-      transform: scale(1) translate(0, 0);
-      opacity: 0.6;
-    }
-    50% {
-      transform: scale(1.1) translate(2%, -2%);
-      opacity: 1;
-    }
-    100% {
-      transform: scale(0.95) translate(-2%, 2%);
-      opacity: 0.8;
-    }
-  }
-
-  @keyframes background-glow-secondary {
-    0% {
-      transform: translate(0, 0);
-      opacity: 0.4;
-    }
-    100% {
-      transform: translate(3%, 3%);
-      opacity: 0.7;
-    }
+    animation: scroll 25s linear infinite;
   }
 }
