@@ -132,18 +132,6 @@ export default function PluginDetailPage() {
               <p className="mt-2 text-lg text-muted-foreground">by {plugin.author}</p>
             </div>
             <div className="flex gap-2">
-              <Button 
-                variant="outline" 
-                size="lg" 
-                className={cn(
-                  "gap-2 transition-all duration-300",
-                  isLiked ? "border-primary/50 bg-primary/10 text-primary" : "hover:border-primary/50"
-                )}
-                onClick={handleLike}
-              >
-                <Heart className={cn("h-5 w-5 transition-transform active:scale-125", isLiked && "fill-primary")} />
-                {plugin.likes?.toLocaleString() || 0}
-              </Button>
               <DownloadDialog plugin={plugin} />
             </div>
           </div>
@@ -224,6 +212,21 @@ export default function PluginDetailPage() {
           </Tabs>
         </div>
         <aside className="space-y-8">
+           <Button 
+            variant="outline" 
+            size="lg" 
+            className={cn(
+              "w-full h-14 text-lg gap-3 transition-all duration-300 shadow-lg",
+              isLiked 
+                ? "border-primary bg-primary/10 text-primary hover:bg-primary/20 shadow-primary/20" 
+                : "border-primary/20 bg-card/50 hover:border-primary/50 hover:bg-primary/5"
+            )}
+            onClick={handleLike}
+          >
+            <Heart className={cn("h-6 w-6 transition-transform active:scale-125", isLiked && "fill-primary")} />
+            {isLiked ? "Saved to Favorites" : "Favorite this Plugin"}
+          </Button>
+
            <Card className="border-primary/10 bg-card/30 backdrop-blur-sm shadow-lg">
             <CardHeader>
               <CardTitle className="text-xl font-bold">Plugin Metrics</CardTitle>
