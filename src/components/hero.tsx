@@ -11,13 +11,26 @@ export function Hero() {
   const [totalDownloads, setTotalDownloads] = useState(0);
   const [totalPlugins, setTotalPlugins] = useState(0);
 
-  useEffect(() => {
+  const loadStats = () => {
     const stored = localStorage.getItem('plugins-data');
     const data = stored ? JSON.parse(stored) : mockPlugins;
     
     const downloads = data.reduce((acc: number, p: any) => acc + (p.downloads || 0), 0);
     setTotalDownloads(downloads);
     setTotalPlugins(data.length);
+  };
+
+  useEffect(() => {
+    loadStats();
+    
+    const handleUpdate = () => loadStats();
+    window.addEventListener('storage', handleUpdate);
+    window.addEventListener('pluginsUpdated', handleUpdate);
+    
+    return () => {
+      window.removeEventListener('storage', handleUpdate);
+      window.removeEventListener('pluginsUpdated', handleUpdate);
+    };
   }, []);
 
   const formattedDownloads = (totalDownloads / 1_000_000).toFixed(1) + "M+";
@@ -54,7 +67,6 @@ export function Hero() {
             </Button>
           </div>
 
-          {/* Statistics Bar */}
           <div className="mt-16 inline-flex flex-wrap items-center justify-center gap-8 rounded-full border border-primary/20 bg-card/30 px-8 py-4 backdrop-blur-md shadow-[0_0_15px_rgba(34,197,94,0.1)] animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-500 fill-mode-both">
             <div className="flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary">

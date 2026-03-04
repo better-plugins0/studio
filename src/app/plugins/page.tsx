@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useEffect } from 'react';
 import type { Plugin } from '@/lib/types';
-import { plugins as mockPlugins } from '@/lib/all-plugins-data'; // Shared source
+import { plugins as mockPlugins } from '@/lib/mock-data';
 import { PluginFilters } from '@/components/plugin-filters';
 import { PluginListItem } from '@/components/plugin-list-item';
 import { Input } from '@/components/ui/input';
@@ -26,34 +26,37 @@ export default function PluginsPage() {
   const [selectedVersions, setSelectedVersions] = useState<string[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
 
+  const loadPlugins = () => {
+    const stored = localStorage.getItem('plugins-data');
+    if (stored) {
+      setPlugins(JSON.parse(stored));
+    } else {
+      setPlugins(mockPlugins);
+      localStorage.setItem('plugins-data', JSON.stringify(mockPlugins));
+    }
+  };
+
   useEffect(() => {
-    const loadPlugins = () => {
-      const stored = localStorage.getItem('plugins-data');
-      if (stored) {
-        setPlugins(JSON.parse(stored));
-      } else {
-        setPlugins(mockPlugins);
-        localStorage.setItem('plugins-data', JSON.stringify(mockPlugins));
-      }
-    };
     loadPlugins();
 
-    // Listen for storage changes in other tabs
-    const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === 'plugins-data') {
-        loadPlugins();
-      }
-    };
+    // Listen for storage changes from the admin panel
+    const handleStorageChange = () => loadPlugins();
     window.addEventListener('storage', handleStorageChange);
-    return () => window.removeEventListener('storage', handleStorageChange);
+    // Custom event for same-window updates
+    window.addEventListener('pluginsUpdated', handleStorageChange);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('pluginsUpdated', handleStorageChange);
+    };
   }, []);
 
   const allGameVersions = useMemo(() => {
-    return [...new Set(plugins.flatMap(p => p.versions.map(v => v.gameVersion)))].sort((a, b) => b.localeCompare(a, undefined, { numeric: true }));
+    return [...new Set(plugins.flatMap(p => p.minecraftVersions || []))].sort((a, b) => b.localeCompare(a, undefined, { numeric: true }));
   }, [plugins]);
 
   const allPlatforms = useMemo(() => {
-    return [...new Set(plugins.flatMap(p => p.versions.flatMap(v => v.platforms.map(p => p.name))))];
+    return [...new Set(plugins.flatMap(p => p.versions?.flatMap(v => v.platforms.map(plat => plat.name)) || []))];
   }, [plugins]);
 
   const filteredAndSortedPlugins = useMemo(() => {
@@ -64,23 +67,22 @@ export default function PluginsPage() {
 
       const platformMatch =
         selectedPlatforms.length === 0 ||
-        plugin.versions.some(v => v.platforms.some(p => selectedPlatforms.includes(p.name)));
+        plugin.versions?.some(v => v.platforms.some(p => selectedPlatforms.includes(p.name)));
       
       const versionMatch =
         selectedVersions.length === 0 ||
-        plugin.versions.some(v => selectedVersions.includes(v.gameVersion));
+        plugin.minecraftVersions?.some(v => selectedVersions.includes(v));
 
       return searchTermMatch && platformMatch && versionMatch;
     });
 
     switch (sortOption) {
       case 'downloads':
-        filtered.sort((a, b) => b.downloads - a.downloads);
+        filtered.sort((a, b) => (b.downloads || 0) - (a.downloads || 0));
         break;
       case 'name':
         filtered.sort((a, b) => a.name.localeCompare(b.name));
         break;
-      case 'relevance':
       default:
         break;
     }
@@ -93,7 +95,6 @@ export default function PluginsPage() {
   }, [searchTerm, sortOption, selectedPlatforms, selectedVersions]);
 
   const totalPages = Math.ceil(filteredAndSortedPlugins.length / ITEMS_PER_PAGE);
-
   const paginatedPlugins = filteredAndSortedPlugins.slice(
     (currentPage - 1) * ITEMS_PER_PAGE,
     currentPage * ITEMS_PER_PAGE
@@ -114,7 +115,6 @@ export default function PluginsPage() {
   return (
     <div className="container mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 animate-in fade-in slide-in-from-bottom-8 duration-1000 fill-mode-forwards">
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-4">
-        {/* Sidebar */}
         <div className="lg:col-span-1">
           <PluginFilters 
             availablePlatforms={allPlatforms}
@@ -126,7 +126,6 @@ export default function PluginsPage() {
           />
         </div>
 
-        {/* Main Content */}
         <div className="lg:col-span-3 space-y-6">
           <div className="flex flex-col md:flex-row gap-4 justify-between">
             <div className="relative flex-1">
@@ -172,7 +171,6 @@ export default function PluginsPage() {
                   variant={currentPage === page ? "default" : "outline"}
                   size="sm"
                   onClick={() => setCurrentPage(page)}
-                  className={currentPage === page ? "bg-primary/80 text-primary-foreground" : ""}
                 >
                   {page}
                 </Button>

@@ -4,27 +4,40 @@ import { useState, useEffect } from 'react';
 import { plugins as mockPlugins } from "@/lib/mock-data";
 import type { Plugin } from "@/lib/types";
 import { PluginCard } from "@/components/plugin-card";
-import { cn } from "@/lib/utils";
 
 export function PluginCarousel() {
   const [plugins, setPlugins] = useState<Plugin[]>([]);
 
-  useEffect(() => {
+  const loadPlugins = () => {
     const stored = localStorage.getItem('plugins-data');
     if (stored) {
       setPlugins(JSON.parse(stored));
     } else {
       setPlugins(mockPlugins);
     }
+  };
+
+  useEffect(() => {
+    loadPlugins();
+
+    const handleUpdate = () => loadPlugins();
+    window.addEventListener('storage', handleUpdate);
+    window.addEventListener('pluginsUpdated', handleUpdate);
+    
+    return () => {
+      window.removeEventListener('storage', handleUpdate);
+      window.removeEventListener('pluginsUpdated', handleUpdate);
+    };
   }, []);
 
-  const allPlugins = [...plugins, ...plugins]; // Duplicate for seamless loop
+  // Duplicate for seamless infinite loop
+  const allPlugins = plugins.length > 0 ? [...plugins, ...plugins] : [];
 
   if (plugins.length === 0) return null;
 
   return (
     <section id="plugins">
-       <div className="space-y-4 text-center mb-12">
+       <div className="space-y-4 text-center mb-12 px-4">
         <h2 className="font-headline text-3xl font-bold tracking-tight sm:text-4xl">
           Featured Plugins
         </h2>

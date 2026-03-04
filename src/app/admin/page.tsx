@@ -100,6 +100,13 @@ export default function AdminPage() {
     );
   }, [plugins, searchQuery]);
 
+  const triggerUpdate = (updatedPlugins: Plugin[]) => {
+    setPlugins(updatedPlugins);
+    localStorage.setItem('plugins-data', JSON.stringify(updatedPlugins));
+    // Dispatch custom event for same-tab updates
+    window.dispatchEvent(new Event('pluginsUpdated'));
+  };
+
   const handleLogout = async () => {
     try {
       await signOut(auth);
@@ -139,9 +146,7 @@ export default function AdminPage() {
       ]
     };
 
-    const updatedPlugins = [newPlugin, ...plugins];
-    setPlugins(updatedPlugins);
-    localStorage.setItem('plugins-data', JSON.stringify(updatedPlugins));
+    triggerUpdate([newPlugin, ...plugins]);
     
     toast({
       title: "Plugin Created",
@@ -173,8 +178,7 @@ export default function AdminPage() {
       return p;
     });
 
-    setPlugins(updatedPlugins);
-    localStorage.setItem('plugins-data', JSON.stringify(updatedPlugins));
+    triggerUpdate(updatedPlugins);
     
     toast({
       title: "Plugin Updated",
@@ -192,8 +196,7 @@ export default function AdminPage() {
   const handleDeletePlugin = (id: string) => {
     if (confirm('Are you sure you want to delete this plugin? This action cannot be undone.')) {
       const updatedPlugins = plugins.filter(p => p.id !== id);
-      setPlugins(updatedPlugins);
-      localStorage.setItem('plugins-data', JSON.stringify(updatedPlugins));
+      triggerUpdate(updatedPlugins);
       toast({
         title: "Plugin Deleted",
         description: "The plugin has been removed from the directory.",
