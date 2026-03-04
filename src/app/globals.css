@@ -67,13 +67,16 @@
   }
   
   @keyframes scroll {
+    from {
+      transform: translateX(0);
+    }
     to {
-      transform: translate(calc(-50% - 0.5rem));
+      transform: translateX(calc(-50% - 2rem));
     }
   }
 
   .scrolling-animation {
-    animation: scroll 20s linear infinite;
+    animation: scroll 40s linear infinite;
   }
 
   @keyframes background-glow {
