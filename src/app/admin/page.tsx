@@ -67,16 +67,18 @@ export default function AdminPage() {
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
-    // Handle plugin data loading from localStorage
-    const storedPlugins = localStorage.getItem('plugins-data');
-    if (storedPlugins) {
-      setPlugins(JSON.parse(storedPlugins));
-    } else {
-      setPlugins(mockPlugins);
-      localStorage.setItem('plugins-data', JSON.stringify(mockPlugins));
-    }
+    const loadData = () => {
+      const storedPlugins = localStorage.getItem('plugins-data');
+      if (storedPlugins) {
+        setPlugins(JSON.parse(storedPlugins));
+      } else {
+        setPlugins(mockPlugins);
+        localStorage.setItem('plugins-data', JSON.stringify(mockPlugins));
+      }
+    };
 
-    // Handle authentication state
+    loadData();
+
     if (!auth) {
       setIsLoading(false);
       return;
@@ -99,8 +101,8 @@ export default function AdminPage() {
     const totalLikes = plugins.reduce((acc, p) => acc + (p.likes || 0), 0);
     return {
       totalPlugins: plugins.length,
-      totalDownloads: (totalDownloads / 1_000_000).toFixed(1) + 'M',
-      totalLikes: (totalLikes / 1000).toFixed(1) + 'k'
+      totalDownloads: totalDownloads >= 1_000_000 ? (totalDownloads / 1_000_000).toFixed(1) + 'M' : (totalDownloads / 1000).toFixed(1) + 'k',
+      totalLikes: totalLikes >= 1000 ? (totalLikes / 1000).toFixed(1) + 'k' : totalLikes
     };
   }, [plugins]);
 
@@ -115,7 +117,6 @@ export default function AdminPage() {
     setPlugins(updatedPlugins);
     localStorage.setItem('plugins-data', JSON.stringify(updatedPlugins));
     window.dispatchEvent(new Event('pluginsUpdated'));
-    // Trigger storage event for same-window listeners
     window.dispatchEvent(new Event('storage'));
   };
 
@@ -262,9 +263,7 @@ export default function AdminPage() {
             </div>
             <div className="flex gap-2">
               <Button onClick={handleLogout} variant="outline" className="md:hidden">Logout</Button>
-              <Dialog open={isAddDialogOpen} onOpenChange={setOpen => {
-                setIsAddDialogOpen(setOpen);
-              }}>
+              <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
                 <DialogTrigger asChild>
                   <Button className="gap-2 shadow-lg shadow-primary/20">
                     <Plus className="h-4 w-4" /> Add New Plugin
@@ -374,7 +373,14 @@ export default function AdminPage() {
                         <TableCell className="font-medium">
                           <div className="flex items-center gap-3">
                             <div className="h-10 w-10 rounded-md bg-white/5 border border-primary/20 flex items-center justify-center overflow-hidden">
-                              <img src={plugin.iconUrl || DEFAULT_ICON} alt="" className="h-8 w-8 object-contain" />
+                              <img 
+                                src={plugin.iconUrl || DEFAULT_ICON} 
+                                alt="" 
+                                className="h-8 w-8 object-contain"
+                                onError={(e) => {
+                                  (e.target as HTMLImageElement).src = DEFAULT_ICON;
+                                }}
+                              />
                             </div>
                             <div>
                               <div className="font-bold">{plugin.name}</div>
@@ -385,10 +391,10 @@ export default function AdminPage() {
                         <TableCell>
                           <div className="flex flex-col gap-1 text-xs">
                             <div className="flex items-center gap-1.5">
-                              <Download className="h-3 w-3" /> {((plugin.downloads || 0) / 1_000_000).toFixed(1)}M
+                              <Download className="h-3 w-3" /> {plugin.downloads >= 1_000_000 ? (plugin.downloads / 1_000_000).toFixed(1) + 'M' : (plugin.downloads / 1000).toFixed(1) + 'k'}
                             </div>
                             <div className="flex items-center gap-1.5">
-                              <Heart className="h-3 w-3" /> {((plugin.likes || 0) / 1000).toFixed(1)}k
+                              <Heart className="h-3 w-3" /> {plugin.likes >= 1000 ? (plugin.likes / 1000).toFixed(1) + 'k' : plugin.likes}
                             </div>
                           </div>
                         </TableCell>

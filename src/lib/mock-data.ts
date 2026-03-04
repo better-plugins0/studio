@@ -1,11 +1,12 @@
-
 import type { Plugin } from './types';
 import placeholderData from './placeholder-images.json';
 
 const { placeholderImages } = placeholderData;
 
 const getImage = (id: string) => {
-  return placeholderImages.find(img => img.id === id)?.imageUrl || `https://picsum.photos/seed/${id}/256/256`;
+  const found = placeholderImages.find(img => img.id === id);
+  // Ensure we return a working fallback if the domain is unreliable
+  return found?.imageUrl || `https://picsum.photos/seed/${id}/256/256`;
 };
 
 const getGalleryImage = (id: string, hint: string) => {

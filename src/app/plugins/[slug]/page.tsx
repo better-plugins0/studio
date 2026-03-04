@@ -20,6 +20,8 @@ import { Button } from "@/components/ui/button";
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 
+const FALLBACK_ICON = 'https://picsum.photos/seed/plugin/256/256';
+
 export default function PluginDetailPage() {
   const params = useParams();
   const { toast } = useToast();
@@ -27,6 +29,7 @@ export default function PluginDetailPage() {
   const [plugin, setPlugin] = useState<Plugin | null>(null);
   const [loading, setLoading] = useState(true);
   const [isLiked, setIsLiked] = useState(false);
+  const [imgSrc, setImgSrc] = useState<string>(FALLBACK_ICON);
 
   useEffect(() => {
     if (slug) {
@@ -35,22 +38,20 @@ export default function PluginDetailPage() {
         const storedPlugins = localStorage.getItem('plugins-data');
         pluginsData = storedPlugins ? JSON.parse(storedPlugins) : mockPlugins;
         
-        // Ensure local storage is initialized if empty
         if (!storedPlugins) {
           localStorage.setItem('plugins-data', JSON.stringify(mockPlugins));
         }
       } catch (e) {
         pluginsData = mockPlugins;
-        console.error("Failed to parse plugins from storage.", e);
       }
       
       const foundPlugin = pluginsData.find((p) => p.slug === slug);
       
       if (foundPlugin) {
         setPlugin(foundPlugin);
+        setImgSrc(foundPlugin.iconUrl || FALLBACK_ICON);
         document.title = `${foundPlugin.name} - BetterPlugins Hub`;
         
-        // Check if user has liked this plugin (stored in local storage as a list of IDs)
         const likedPlugins = JSON.parse(localStorage.getItem('user-likes') || '[]');
         setIsLiked(likedPlugins.includes(foundPlugin.id));
       }
@@ -78,12 +79,10 @@ export default function PluginDetailPage() {
       newLikesCount = Math.max(0, newLikesCount - 1);
     }
 
-    // Update local state
     setIsLiked(newLikedState);
     const updatedPlugin = { ...plugin, likes: newLikesCount };
     setPlugin(updatedPlugin);
 
-    // Update global plugins data
     const storedPlugins = JSON.parse(localStorage.getItem('plugins-data') || '[]');
     const updatedPlugins = storedPlugins.map((p: Plugin) => 
       p.id === plugin.id ? updatedPlugin : p
@@ -91,8 +90,6 @@ export default function PluginDetailPage() {
     
     localStorage.setItem('plugins-data', JSON.stringify(updatedPlugins));
     localStorage.setItem('user-likes', JSON.stringify(likedPlugins));
-
-    // Trigger storage event for other components
     window.dispatchEvent(new Event('storage'));
   };
 
@@ -113,12 +110,14 @@ export default function PluginDetailPage() {
       <header className="mb-12 flex flex-col items-start gap-8 md:flex-row">
         <div className="relative group">
           <Image
-            src={plugin.iconUrl || 'https://picsum.photos/seed/plugin/256/256'}
+            src={imgSrc}
             alt={`${plugin.name} icon`}
             width={128}
             height={128}
             className="h-32 w-32 shrink-0 rounded-xl border-4 border-card object-cover shadow-2xl transition-transform duration-500 group-hover:scale-105"
+            onError={() => setImgSrc(FALLBACK_ICON)}
             data-ai-hint="plugin icon"
+            priority
           />
           <div className="absolute -inset-1 rounded-xl bg-primary/20 opacity-0 blur transition duration-500 group-hover:opacity-100" />
         </div>
@@ -144,7 +143,7 @@ export default function PluginDetailPage() {
               <DownloadDialog plugin={plugin} />
             </div>
           </div>
-          <p className="mt-6 max-w-2xl text-foreground/80 leading-relaxed">{plugin.longDescription}</p>
+          <p className="mt-6 max-w-2xl text-foreground/80 leading-relaxed">{plugin.description}</p>
           <div className="mt-6 flex flex-wrap gap-2">
             {plugin.minecraftVersions.map((version) => (
               <Badge key={version} variant="secondary" className="px-3 py-1"><Server className="mr-1.5 h-3.5 w-3.5" />{version}</Badge>
@@ -202,16 +201,6 @@ export default function PluginDetailPage() {
                       </div>
                       <p className="mt-4 text-foreground/70 leading-relaxed italic">"This plugin is amazing! It completely changed how I play on my server. A must-have for any modern Paper server."</p>
                     </div>
-                     <div className="border-b border-border/30 pb-6">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold">A</div>
-                          <h4 className="font-semibold text-lg">Alex</h4>
-                        </div>
-                        <span className="text-yellow-400">★★★★☆</span>
-                      </div>
-                      <p className="mt-4 text-foreground/70 leading-relaxed italic">"Great plugin, works exactly as described. Had a small issue during setup but the developer helped me out on Discord."</p>
-                    </div>
                   </div>
                 </div>
               </TabsContent>
@@ -248,27 +237,6 @@ export default function PluginDetailPage() {
                 <span className="text-muted-foreground">Category</span>
                 <Badge variant="outline" className="border-primary/30 text-primary">{plugin.category}</Badge>
               </div>
-            </CardContent>
-          </Card>
-          
-          <Card className="border-primary/10 bg-card/30 backdrop-blur-sm shadow-lg">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-xl font-bold">
-                <History className="h-5 w-5 text-primary" />
-                Compatibility
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {plugin.versions.map((version) => (
-                <div key={version.gameVersion} className="flex justify-between items-center group">
-                  <span className="font-medium text-foreground group-hover:text-primary transition-colors">{version.gameVersion}</span>
-                  <div className="flex gap-1.5">
-                    {version.platforms.map(platform => (
-                      <Badge key={platform.name} variant="outline" className="text-[10px] uppercase tracking-wider h-5">{platform.name}</Badge>
-                    ))}
-                  </div>
-                </div>
-              ))}
             </CardContent>
           </Card>
         </aside>
