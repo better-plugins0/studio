@@ -37,7 +37,7 @@ import { plugins as mockPlugins } from '@/lib/mock-data';
 import type { Plugin } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
 import { auth } from '@/lib/firebase';
-import { signOut, onAuthStateChanged } from 'firebase/auth';
+import { signOut, onAuthStateChanged, User } from 'firebase/auth';
 import { 
   Plus, 
   Download, 
@@ -60,26 +60,37 @@ export default function AdminPage() {
   const { toast } = useToast();
   const [plugins, setPlugins] = useState<Plugin[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [user, setUser] = useState<User | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [editingPlugin, setEditingPlugin] = useState<Plugin | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (!user) {
+    // Handle plugin data loading from localStorage
+    const storedPlugins = localStorage.getItem('plugins-data');
+    if (storedPlugins) {
+      setPlugins(JSON.parse(storedPlugins));
+    } else {
+      setPlugins(mockPlugins);
+      localStorage.setItem('plugins-data', JSON.stringify(mockPlugins));
+    }
+
+    // Handle authentication state
+    if (!auth) {
+      setIsLoading(false);
+      return;
+    }
+
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      if (!currentUser) {
         router.push('/admin/login');
       } else {
-        const storedPlugins = localStorage.getItem('plugins-data');
-        if (storedPlugins) {
-          setPlugins(JSON.parse(storedPlugins));
-        } else {
-          setPlugins(mockPlugins);
-          localStorage.setItem('plugins-data', JSON.stringify(mockPlugins));
-        }
+        setUser(currentUser);
         setIsLoading(false);
       }
     });
+
     return () => unsubscribe();
   }, [router]);
 
@@ -103,11 +114,11 @@ export default function AdminPage() {
   const triggerUpdate = (updatedPlugins: Plugin[]) => {
     setPlugins(updatedPlugins);
     localStorage.setItem('plugins-data', JSON.stringify(updatedPlugins));
-    // Dispatch custom event for same-tab updates
     window.dispatchEvent(new Event('pluginsUpdated'));
   };
 
   const handleLogout = async () => {
+    if (!auth) return;
     try {
       await signOut(auth);
       router.push('/admin/login');
@@ -136,7 +147,7 @@ export default function AdminPage() {
       downloads: 0,
       likes: 0,
       lastUpdated: 'Just now',
-      author: auth.currentUser?.displayName || 'Admin',
+      author: user?.displayName || 'Admin',
       minecraftVersions: ['1.21.x'],
       gallery: [],
       overview: `<p>${longDescription}</p>`,
@@ -216,11 +227,11 @@ export default function AdminPage() {
           </div>
           <div className="mb-6 flex items-center gap-3 px-2 py-3 rounded-lg bg-primary/5 border border-primary/10">
              <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center text-primary text-xs font-bold">
-               {auth.currentUser?.displayName?.charAt(0) || 'A'}
+               {user?.displayName?.charAt(0) || 'A'}
              </div>
              <div className="flex-1 overflow-hidden">
-               <div className="text-xs font-semibold truncate">{auth.currentUser?.displayName || 'Admin'}</div>
-               <div className="text-[10px] text-muted-foreground truncate">{auth.currentUser?.email}</div>
+               <div className="text-xs font-semibold truncate">{user?.displayName || 'Admin'}</div>
+               <div className="text-[10px] text-muted-foreground truncate">{user?.email || 'Unauthorized'}</div>
              </div>
           </div>
           <nav className="flex-1 space-y-2">
@@ -245,7 +256,7 @@ export default function AdminPage() {
           <header className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h1 className="font-headline text-3xl font-bold tracking-tight">Management Console</h1>
-              <p className="text-muted-foreground">Welcome back, {auth.currentUser?.displayName?.split(' ')[0] || 'Administrator'}.</p>
+              <p className="text-muted-foreground">Welcome back, {user?.displayName?.split(' ')[0] || 'Administrator'}.</p>
             </div>
             <div className="flex gap-2">
               <Button onClick={handleLogout} variant="outline" className="md:hidden">Logout</Button>

@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { ShieldCheck, LogIn } from 'lucide-react';
+import { ShieldCheck } from 'lucide-react';
 import { auth, googleProvider } from '@/lib/firebase';
 import { signInWithPopup, onAuthStateChanged } from 'firebase/auth';
 
@@ -15,6 +15,7 @@ export default function AdminLoginPage() {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
+    if (!auth) return;
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         router.push('/admin');
@@ -24,6 +25,15 @@ export default function AdminLoginPage() {
   }, [router]);
 
   const handleGoogleLogin = async () => {
+    if (!auth) {
+      toast({
+        variant: "destructive",
+        title: "Configuration Missing",
+        description: "Firebase is not configured. Please add your environment variables.",
+      });
+      return;
+    }
+
     setIsLoading(true);
     try {
       await signInWithPopup(auth, googleProvider);
@@ -92,6 +102,11 @@ export default function AdminLoginPage() {
               )}
             </Button>
           </div>
+          {!auth && (
+            <p className="mt-4 text-center text-xs text-destructive font-medium">
+              Notice: Firebase credentials not detected. Setup .env variables to enable login.
+            </p>
+          )}
           <p className="mt-6 text-center text-xs text-muted-foreground">
             Access is restricted to whitelisted accounts.
           </p>

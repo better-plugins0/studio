@@ -11,24 +11,22 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-// Only initialize if we have an API key, otherwise provide dummy instances for build time
-const isConfigValid = !!firebaseConfig.apiKey && firebaseConfig.apiKey !== "undefined";
+// Only initialize if we have an API key and are on the client
+// This prevents build-time errors on Vercel/Firebase App Hosting
+const isConfigValid = typeof window !== 'undefined' && !!firebaseConfig.apiKey && firebaseConfig.apiKey !== "undefined";
 
-let app: FirebaseApp;
-let auth: Auth;
-let db: Firestore;
+let app: FirebaseApp | undefined;
+let auth: Auth | undefined;
+let db: Firestore | undefined;
 
 if (isConfigValid) {
-  app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
-  auth = getAuth(app);
-  db = getFirestore(app);
-} else {
-  // Fallback for build time to prevent "invalid-api-key" errors
-  // These won't work for real requests, but prevent the build from crashing
-  app = {} as FirebaseApp;
-  auth = {} as Auth;
-  db = {} as Firestore;
-  console.warn("Firebase configuration is missing or invalid. Check your environment variables.");
+  try {
+    app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
+    auth = getAuth(app);
+    db = getFirestore(app);
+  } catch (error) {
+    console.error("Firebase initialization error:", error);
+  }
 }
 
 const googleProvider = new GoogleAuthProvider();
