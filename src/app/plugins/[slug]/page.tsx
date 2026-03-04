@@ -1,6 +1,7 @@
+
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useParams, notFound } from 'next/navigation';
 import { plugins as mockPlugins } from "@/lib/mock-data";
 import type { Plugin } from '@/lib/types';
@@ -12,13 +13,13 @@ import {
   TabsTrigger,
 } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Server, History, Heart, Download } from "lucide-react";
+import { Server, History, Heart, Download, Clock, ExternalLink } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { DownloadDialog } from "@/components/download-dialog";
 import { RatingForm } from "@/components/rating-form";
 import { Button } from "@/components/ui/button";
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
+import Link from 'next/link';
 
 const FALLBACK_ICON = 'https://picsum.photos/seed/plugin/256/256';
 
@@ -30,6 +31,8 @@ export default function PluginDetailPage() {
   const [loading, setLoading] = useState(true);
   const [isLiked, setIsLiked] = useState(false);
   const [imgSrc, setImgSrc] = useState<string>(FALLBACK_ICON);
+  const [activeTab, setActiveTab] = useState("overview");
+  const changelogRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (slug) {
@@ -83,7 +86,6 @@ export default function PluginDetailPage() {
     const updatedPlugin = { ...plugin, likes: newLikesCount };
     setPlugin(updatedPlugin);
 
-    // Update global store
     const storedPlugins = JSON.parse(localStorage.getItem('plugins-data') || '[]');
     const updatedPlugins = storedPlugins.map((p: Plugin) => 
       p.id === plugin.id ? updatedPlugin : p
@@ -92,9 +94,15 @@ export default function PluginDetailPage() {
     localStorage.setItem('plugins-data', JSON.stringify(updatedPlugins));
     localStorage.setItem('user-likes', JSON.stringify(likedPlugins));
     
-    // Notify other components
     window.dispatchEvent(new Event('storage'));
     window.dispatchEvent(new Event('pluginsUpdated'));
+  };
+
+  const scrollToDownloads = () => {
+    setActiveTab("changelog");
+    setTimeout(() => {
+      changelogRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
   };
 
   if (loading) {
@@ -132,7 +140,9 @@ export default function PluginDetailPage() {
               <p className="mt-2 text-lg text-muted-foreground">by {plugin.author}</p>
             </div>
             <div className="flex gap-2">
-              <DownloadDialog plugin={plugin} />
+              <Button size="lg" onClick={scrollToDownloads} className="mt-6 transition-transform duration-300 hover:scale-105 hover:shadow-lg hover:shadow-primary/30">
+                <Download className="mr-2 h-5 w-5" /> Get Latest Version
+              </Button>
             </div>
           </div>
           <p className="mt-6 max-w-2xl text-foreground/80 leading-relaxed">{plugin.description}</p>
@@ -147,13 +157,13 @@ export default function PluginDetailPage() {
 
       <div className="grid grid-cols-1 gap-12 lg:grid-cols-3">
         <div className="lg:col-span-2">
-          <Tabs defaultValue="overview" className="w-full">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="grid w-full grid-cols-3 bg-card/50 border border-border/50">
               <TabsTrigger value="overview">Overview</TabsTrigger>
               <TabsTrigger value="reviews">Ratings</TabsTrigger>
-              <TabsTrigger value="changelog">Changelog</TabsTrigger>
+              <TabsTrigger value="changelog">Changelog & Downloads</TabsTrigger>
             </TabsList>
-            <div className="prose prose-invert mt-6 max-w-none rounded-xl border border-primary/10 bg-card/30 backdrop-blur-sm p-8 shadow-xl">
+            <div ref={changelogRef} className="prose prose-invert mt-6 max-w-none rounded-xl border border-primary/10 bg-card/30 backdrop-blur-sm p-8 shadow-xl">
               <TabsContent value="overview" className="mt-0">
                  <div className="leading-relaxed" dangerouslySetInnerHTML={{ __html: plugin.overview }} />
                  {plugin.gallery && plugin.gallery.length > 0 && (
@@ -197,15 +207,48 @@ export default function PluginDetailPage() {
                 </div>
               </TabsContent>
               <TabsContent value="changelog" className="mt-0">
-                 <div className="space-y-10">
-                   {plugin.changelog.map((entry, i) => (
-                     <div key={i} className="relative pl-8 before:absolute before:left-0 before:top-2 before:h-2 before:w-2 before:rounded-full before:bg-primary">
-                       <h4 className="font-headline font-bold text-xl text-primary mb-3">Version {entry.version}</h4>
-                       <ul className="list-disc list-inside space-y-2 text-foreground/80">
-                         {entry.changes.map((change, j) => <li key={j} className="marker:text-primary/50">{change}</li>)}
-                       </ul>
-                     </div>
-                   ))}
+                 <div className="space-y-12">
+                   {plugin.versions.map((versionData, i) => {
+                     const changelogEntry = plugin.changelog.find(c => c.version === versionData.gameVersion || c.version.includes(versionData.gameVersion));
+                     
+                     return (
+                       <div key={i} className="relative pl-8 before:absolute before:left-0 before:top-2 before:h-2 before:w-2 before:rounded-full before:bg-primary border-b border-primary/5 pb-12 last:border-0 last:pb-0">
+                         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
+                           <div>
+                             <h4 className="font-headline font-bold text-2xl text-primary flex items-center gap-2">
+                               Version {versionData.gameVersion}
+                               {i === 0 && <Badge className="bg-primary/20 text-primary border-none text-[10px] uppercase">Latest</Badge>}
+                             </h4>
+                             <div className="flex items-center gap-4 mt-1 text-xs text-muted-foreground uppercase tracking-wider font-semibold">
+                               <span className="flex items-center gap-1.5"><Server className="h-3.5 w-3.5" /> MC {versionData.gameVersion}</span>
+                               <span className="flex items-center gap-1.5"><Clock className="h-3.5 w-3.5" /> {plugin.lastUpdated}</span>
+                             </div>
+                           </div>
+                           <div className="flex flex-wrap gap-2">
+                             {versionData.platforms.map((platform) => (
+                               <Button key={platform.name} asChild size="sm" variant="outline" className="h-9 border-primary/20 hover:bg-primary/10 hover:border-primary/50 text-xs gap-2">
+                                 <Link href={platform.downloadUrl}>
+                                   <Download className="h-3.5 w-3.5" />
+                                   Download for {platform.name}
+                                 </Link>
+                               </Button>
+                             ))}
+                           </div>
+                         </div>
+                         
+                         {changelogEntry && (
+                           <div className="mt-4">
+                             <h5 className="text-sm font-bold text-foreground/90 mb-2">What's New:</h5>
+                             <ul className="list-disc list-inside space-y-1 text-sm text-foreground/80">
+                               {changelogEntry.changes.map((change, j) => (
+                                 <li key={j} className="marker:text-primary/50">{change}</li>
+                               ))}
+                             </ul>
+                           </div>
+                         )}
+                       </div>
+                     );
+                   })}
                  </div>
               </TabsContent>
             </div>
